@@ -8,7 +8,7 @@ use super::regex::Regex;
 use anitomy_pure::elements::Category;
 use anitomy_pure::Parser;
 use golia_pinyin::{is_valid_syllable, segment};
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
 
 const MEDIA_TYPE_MOVIE: &str = "电影";
@@ -517,7 +517,7 @@ fn parse_video_token(
     if init_part(meta, state, token, tokens) {
         return;
     }
-    if init_name(meta, state, token, &options.media_exts) {
+    if init_name(meta, state, token) {
         return;
     }
     if init_year(meta, state, token) {
@@ -882,13 +882,8 @@ fn base_meta(kind: &str, title: &str, subtitle: Option<&str>, isfile: bool) -> M
     }
 }
 
-/// 处理普通影视标题名称字段。
-fn init_name(
-    meta: &mut MetaResult,
-    state: &mut VideoState,
-    token: &str,
-    media_exts: &HashSet<String>,
-) -> bool {
+/// 处理普通影视标题名称字段；已识别的文件后缀由完整入口在分词前统一剥离。
+fn init_name(meta: &mut MetaResult, state: &mut VideoState, token: &str) -> bool {
     if token.is_empty() {
         return false;
     }
@@ -996,9 +991,6 @@ fn init_name(
     {
         state.stop_name = true;
     } else {
-        if media_exts.contains(&format!(".{}", token.to_lowercase())) {
-            return false;
-        }
         if let Some(name) = meta.en_name.as_mut() {
             *name = format!("{name} {token}");
         } else {
@@ -2758,6 +2750,27 @@ mod tests {
         assert_eq!(parsed.resource_pix.as_deref(), Some("1080p"));
         assert_eq!(parsed.resource_type.as_deref(), Some("WEB-DL"));
         assert_eq!(parsed.audio_encode.as_deref(), Some("DDP 5.1"));
+    }
+
+    /// 字幕扩展名与标题词元相同时，仍须保留片名中的词元。
+    #[test]
+    fn preserves_title_token_matching_subtitle_extension() {
+        let options = ParseOptions::cached(
+            Vec::new(),
+            vec![".ass".to_string(), ".mkv".to_string()],
+            String::new(),
+            Vec::new(),
+            HashMap::new(),
+        );
+        let title =
+            "Kick-Ass.2010.PROPER.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos-FGT.mkv";
+        let parsed = build_meta_info(title, None, &options, true);
+        let parsed_path = build_meta_path(&format!("/movies/{title}"), &options);
+
+        assert_eq!(parsed.en_name.as_deref(), Some("Kick Ass"));
+        assert_eq!(parsed.year.as_deref(), Some("2010"));
+        assert_eq!(parsed_path.en_name.as_deref(), Some("Kick Ass"));
+        assert_eq!(parsed_path.year.as_deref(), Some("2010"));
     }
 
     /// 片源标记应按出现顺序完整保留、规范化并去重。
