@@ -1,13 +1,70 @@
 use super::parser::{cn_number_to_i64, i64_to_cn_number, is_chinese_char};
 use super::patterns::LEADING_ZERO_RE;
 use super::regex::Regex;
-use crate::support::cache::BoundedCache;
 use fancy_regex::Captures;
 use once_cell::sync::Lazy;
-use std::sync::Mutex;
+use std::collections::HashMap;
 
-static CUSTOM_WORD_RE_CACHE: Lazy<Mutex<BoundedCache<String, Regex>>> =
-    Lazy::new(|| Mutex::new(BoundedCache::new(256)));
+/// 随解析选项保存整份词表的规则与正则，避免逐条 LRU 淘汰导致循环重编译。
+#[derive(Default)]
+pub(super) struct PreparedWords {
+    rules: Vec<(String, String, Vec<String>)>,
+    regexes: HashMap<String, Option<Regex>>,
+}
+
+impl PreparedWords {
+    /// 一次解析并编译词表；无效正则也保留结果，后续标题不再重复编译。
+    pub(super) fn new(words: &[String]) -> Self {
+        let mut prepared = Self::default();
+        for word in words {
+            if word.is_empty() || word.starts_with('#') {
+                continue;
+            }
+            let Some((word_type, params)) = parse_custom_word(word) else {
+                continue;
+            };
+            let mut patterns = Vec::new();
+            match word_type.as_str() {
+                "replace_and_offset" => {
+                    patterns.push(params[0].clone());
+                    patterns.extend(offset_patterns(&params[2], &params[3]));
+                }
+                "offset" => patterns.extend(offset_patterns(&params[0], &params[1])),
+                _ => patterns.push(params[0].clone()),
+            }
+            for pattern in patterns {
+                prepared
+                    .regexes
+                    .entry(pattern.clone())
+                    .or_insert_with(|| Regex::new(&pattern).ok());
+            }
+            prepared.rules.push((word.clone(), word_type, params));
+        }
+        prepared
+    }
+
+    /// 借用词表持有的编译结果，解析期间无需全局锁或 LRU 顺序更新。
+    fn regex(&self, pattern: &str) -> Option<&Regex> {
+        self.regexes.get(pattern)?.as_ref()
+    }
+}
+
+/// 收集集数偏移使用的定位正则与完整匹配正则。
+fn offset_patterns(front: &str, back: &str) -> Vec<String> {
+    vec![
+        front.to_string(),
+        back.to_string(),
+        offset_pattern(front, back),
+    ]
+}
+
+/// 统一编译与执行阶段的集数偏移匹配表达式。
+fn offset_pattern(front: &str, back: &str) -> String {
+    format!(
+        r"(?<={}.*?)[0-9一二三四五六七八九十]+(?=.*?{})",
+        front, back
+    )
+}
 static SUBTITLE_EPISODE_RANGE_RE: Lazy<Regex> = Lazy::new(|| {
     Regex::new(
         r"(?<!\d)\[?\s*(\d{1,4})\s*-\s*(\d{1,4})\s*(?:(?:Fin|End)(?![a-z0-9])|完结(?![\u4e00-\u9fff]))(?:\s*\](?!\d)|(?!\s*(?:\]\d|\d))\s*)",
@@ -26,22 +83,17 @@ static SUBTITLE_EPISODE_TOKEN_RE: Lazy<Regex> =
 pub(super) fn prepare_words(
     title: &str,
     subtitle: Option<&str>,
-    words: &[String],
+    words: &PreparedWords,
 ) -> (String, Option<String>, Vec<String>) {
     let mut title = title.to_string();
     let mut subtitle = subtitle.map(str::to_string);
     let mut applied = Vec::new();
-    for word in words {
-        if word.is_empty() || word.starts_with('#') {
-            continue;
-        }
-        let Some((word_type, params)) = parse_custom_word(word) else {
-            continue;
-        };
+    for (word, word_type, params) in &words.rules {
         let mut state = false;
         match word_type.as_str() {
             "replace_and_offset" => {
-                let (new_title, replace_state) = replace_regex(&title, &params[0], &params[1]);
+                let (new_title, replace_state) =
+                    replace_regex(&title, &params[0], &params[1], words);
                 title = new_title;
                 if replace_state {
                     let (new_title, new_subtitle, offset_state) = episode_offset_with_subtitle(
@@ -50,6 +102,7 @@ pub(super) fn prepare_words(
                         &params[2],
                         &params[3],
                         &params[4],
+                        words,
                     );
                     title = new_title;
                     subtitle = new_subtitle;
@@ -57,7 +110,8 @@ pub(super) fn prepare_words(
                 }
             }
             "replace" => {
-                let (new_title, replace_state) = replace_regex(&title, &params[0], &params[1]);
+                let (new_title, replace_state) =
+                    replace_regex(&title, &params[0], &params[1], words);
                 title = new_title;
                 state = replace_state;
             }
@@ -68,13 +122,14 @@ pub(super) fn prepare_words(
                     &params[0],
                     &params[1],
                     &params[2],
+                    words,
                 );
                 title = new_title;
                 subtitle = new_subtitle;
                 state = offset_state;
             }
             _ => {
-                let (new_title, replace_state) = replace_regex(&title, &params[0], "");
+                let (new_title, replace_state) = replace_regex(&title, &params[0], "", words);
                 title = new_title;
                 state = replace_state;
             }
@@ -130,8 +185,13 @@ fn parse_custom_word(word: &str) -> Option<(String, Vec<String>)> {
 }
 
 /// 执行自定义识别词正则替换。
-fn replace_regex(title: &str, replaced: &str, replacement: &str) -> (String, bool) {
-    let Some(regex) = cached_fancy_regex(replaced) else {
+fn replace_regex(
+    title: &str,
+    replaced: &str,
+    replacement: &str,
+    words: &PreparedWords,
+) -> (String, bool) {
+    let Some(regex) = words.regex(replaced) else {
         return (title.to_string(), false);
     };
     let Ok(result) = regex.inner.try_replacen(title, 0, |cap: &Captures<'_>| {
@@ -144,9 +204,16 @@ fn replace_regex(title: &str, replaced: &str, replacement: &str) -> (String, boo
 }
 
 /// 执行自定义识别词集数偏移。
-fn episode_offset(title: &str, front: &str, back: &str, offset: &str) -> (String, bool) {
+fn episode_offset(
+    title: &str,
+    front: &str,
+    back: &str,
+    offset: &str,
+    words: &PreparedWords,
+) -> (String, bool) {
     if !back.is_empty()
-        && cached_fancy_regex(back)
+        && words
+            .regex(back)
             .map(|regex| regex.is_match(title))
             .map(|matched| !matched)
             .unwrap_or(true)
@@ -154,18 +221,16 @@ fn episode_offset(title: &str, front: &str, back: &str, offset: &str) -> (String
         return (title.to_string(), false);
     }
     if !front.is_empty()
-        && cached_fancy_regex(front)
+        && words
+            .regex(front)
             .map(|regex| regex.is_match(title))
             .map(|matched| !matched)
             .unwrap_or(true)
     {
         return (title.to_string(), false);
     }
-    let pattern = format!(
-        r"(?<={}.*?)[0-9一二三四五六七八九十]+(?=.*?{})",
-        front, back
-    );
-    let Some(regex) = cached_fancy_regex(&pattern) else {
+    let pattern = offset_pattern(front, back);
+    let Some(regex) = words.regex(&pattern) else {
         return (title.to_string(), false);
     };
     let mut replaced = false;
@@ -198,20 +263,21 @@ fn episode_offset_with_subtitle(
     front: &str,
     back: &str,
     offset: &str,
+    words: &PreparedWords,
 ) -> (String, Option<String>, bool) {
-    let (new_title, title_state) = episode_offset(title, front, back, offset);
+    let (new_title, title_state) = episode_offset(title, front, back, offset, words);
     if title_state {
         return (new_title, subtitle.map(str::to_string), true);
     }
     let Some(subtitle) = subtitle else {
         return (title.to_string(), None, false);
     };
-    let (new_subtitle, subtitle_state) = episode_offset(subtitle, front, back, offset);
+    let (new_subtitle, subtitle_state) = episode_offset(subtitle, front, back, offset, words);
     if subtitle_state {
         return (title.to_string(), Some(new_subtitle), true);
     }
     let context = format!("{title} {subtitle}");
-    if !locators_match(&context, front, back) {
+    if !locators_match(&context, front, back, words) {
         return (title.to_string(), Some(subtitle.to_string()), false);
     }
     let (new_subtitle, subtitle_state) = episode_offset_subtitle(subtitle, offset);
@@ -222,10 +288,11 @@ fn episode_offset_with_subtitle(
 }
 
 /// 判断定位词是否在标题和副标题组成的上下文中同时出现。
-fn locators_match(text: &str, front: &str, back: &str) -> bool {
+fn locators_match(text: &str, front: &str, back: &str, words: &PreparedWords) -> bool {
     for locator in [front, back] {
         if !locator.is_empty()
-            && !cached_fancy_regex(locator)
+            && !words
+                .regex(locator)
                 .map(|regex| regex.is_match(text))
                 .unwrap_or(false)
         {
@@ -293,19 +360,6 @@ fn episode_offset_subtitle(subtitle: &str, offset: &str) -> (String, bool) {
     (result, true)
 }
 
-/// 缓存自定义识别词正则，支持用户规则里的 look-around 与反向引用语法。
-fn cached_fancy_regex(pattern: &str) -> Option<Regex> {
-    let mut cache = CUSTOM_WORD_RE_CACHE
-        .lock()
-        .unwrap_or_else(|poisoned| poisoned.into_inner());
-    if let Some(regex) = cache.get_cloned(&pattern.to_string()) {
-        return Some(regex);
-    }
-    let regex = Regex::new(pattern).ok()?;
-    cache.insert(pattern.to_string(), regex.clone());
-    Some(regex)
-}
-
 /// 按 Python regex.sub 的反斜杠分组语义展开替换词。
 fn expand_python_replacement(cap: &Captures<'_>, replacement: &str) -> String {
     let mut result = String::new();
@@ -350,6 +404,7 @@ fn format_episode_offset(value: &str, offset_value: i64) -> String {
     format!("{:0width$}", offset_value, width = width)
 }
 
+/// 集数偏移算术表达式的词法单元。
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum EpisodeOffsetToken {
     Number(i64),
@@ -419,6 +474,7 @@ fn tokenize_episode_offset(expr: &str, episode: i64) -> Option<Vec<EpisodeOffset
     (!tokens.is_empty()).then_some(tokens)
 }
 
+/// 按算术优先级计算集数偏移的解析状态。
 struct EpisodeOffsetParser<'a> {
     tokens: &'a [EpisodeOffsetToken],
     index: usize,
@@ -497,5 +553,81 @@ impl EpisodeOffsetParser<'_> {
         let token = self.peek()?;
         self.index += 1;
         Some(token)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{prepare_words, PreparedWords};
+    use crate::metainfo::options::ParseOptions;
+    use std::collections::HashMap;
+    use std::sync::Arc;
+
+    /// 超过旧容量乃至 1024 的词表须完整保存正则，并跨标题复用同一编译对象。
+    #[test]
+    fn retains_large_working_set_in_cached_options() {
+        let words = (0..1200)
+            .map(|i| format!("Rule{i}x => Value{i}x"))
+            .collect::<Vec<_>>();
+        let options = ParseOptions::cached(
+            words.clone(),
+            Vec::new(),
+            String::new(),
+            Vec::new(),
+            HashMap::new(),
+        );
+        let regex = options.custom_words.regex("Rule0x").unwrap() as *const _;
+        for _ in 0..3 {
+            let (title, _, applied) =
+                prepare_words("Rule0x Rule1199x", None, &options.custom_words);
+            assert_eq!(title, "Value0x Value1199x");
+            assert_eq!(applied, vec![words[0].clone(), words[1199].clone()]);
+            assert_eq!(options.custom_words.regexes.len(), 1200);
+            assert_eq!(
+                options.custom_words.regex("Rule0x").unwrap() as *const _,
+                regex
+            );
+        }
+        let same =
+            ParseOptions::cached(words, Vec::new(), String::new(), Vec::new(), HashMap::new());
+        assert!(Arc::ptr_eq(&options, &same));
+    }
+
+    /// 词表变更和顺序变化必须重建规则，已有解析选项保持可用且互不污染。
+    #[test]
+    fn isolates_changed_word_lists_and_preserves_order() {
+        let first = PreparedWords::new(&["A => B".into(), "B => C".into()]);
+        let second = PreparedWords::new(&["B => C".into(), "A => B".into()]);
+        assert_eq!(prepare_words("A", None, &first).0, "C");
+        assert_eq!(prepare_words("A", None, &second).0, "B");
+        assert_eq!(prepare_words("A", None, &first).0, "C");
+    }
+
+    /// 无效正则不会中断后续规则，重复正则只编译一次，集数偏移覆盖副标题。
+    #[test]
+    fn retains_invalid_patterns_and_offset_semantics() {
+        let words = vec![
+            "# 注释".into(),
+            "[ => invalid".into(),
+            "旧名 => 新名 && 第 <> 集 >> EP+1".into(),
+            "新名 => 新剧".into(),
+            "第 <> 集 >> EP+1".into(),
+            "屏蔽".into(),
+            "屏蔽 => 未应用".into(),
+        ];
+        let prepared = PreparedWords::new(&words);
+        assert!(matches!(prepared.regexes.get("["), Some(None)));
+        let (title, subtitle, applied) = prepare_words("旧名 屏蔽", Some("第02集"), &prepared);
+        assert_eq!(title, "新剧 ");
+        assert_eq!(subtitle.as_deref(), Some("第04集"));
+        assert_eq!(
+            applied,
+            vec![
+                words[2].clone(),
+                words[3].clone(),
+                words[4].clone(),
+                words[5].clone()
+            ]
+        );
     }
 }

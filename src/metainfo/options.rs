@@ -1,3 +1,4 @@
+use super::custom_words::PreparedWords;
 use super::parser::{build_customization_regex, build_release_group_regex};
 use super::regex::Regex;
 use crate::support::cache::BoundedCache;
@@ -10,15 +11,17 @@ static PARSE_OPTIONS_CACHE: Lazy<Mutex<BoundedCache<ParseOptionsKey, Arc<ParseOp
 static PARSE_OPTIONS_EXTERNAL_KEY_CACHE: Lazy<Mutex<BoundedCache<String, Arc<ParseOptions>>>> =
     Lazy::new(|| Mutex::new(BoundedCache::new(64)));
 
+/// 持有完整配置的不可变解析选项及整批编译规则，供各标题入口共享。
 #[derive(Clone)]
 pub(crate) struct ParseOptions {
-    pub(super) custom_words: Vec<String>,
+    pub(super) custom_words: Arc<PreparedWords>,
     pub(super) media_exts: HashSet<String>,
     pub(super) release_group_regex: Option<Regex>,
     pub(super) customization_regex: Option<Regex>,
     pub(super) streaming_platforms: Arc<HashMap<String, String>>,
 }
 
+/// 按配置原值和规则顺序区分缓存条目，避免词表更新后复用旧规则。
 #[derive(Clone, Eq, Hash, PartialEq)]
 struct ParseOptionsKey {
     custom_words: Vec<String>,
@@ -132,7 +135,7 @@ impl ParseOptions {
         streaming_platforms: HashMap<String, String>,
     ) -> Arc<Self> {
         Arc::new(Self {
-            custom_words,
+            custom_words: Arc::new(PreparedWords::new(&custom_words)),
             media_exts: media_exts.iter().map(|item| item.to_lowercase()).collect(),
             release_group_regex: build_release_group_regex(&release_groups),
             customization_regex: build_customization_regex(&customization_patterns),

@@ -50,7 +50,7 @@ pub(crate) fn build_meta_info(
                 title,
                 subtitle,
                 &ParseOptions {
-                    custom_words: Vec::new(),
+                    custom_words: Default::default(),
                     media_exts: options.media_exts.clone(),
                     release_group_regex: options.release_group_regex.clone(),
                     customization_regex: options.customization_regex.clone(),
