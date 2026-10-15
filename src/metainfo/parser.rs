@@ -23,20 +23,51 @@ pub(crate) fn build_meta_info(
     let org_title = title.to_string();
     let (prepared_title, apply_words) = prepare_words(title, &options.custom_words);
     let explicit = find_explicit_metainfo(&prepared_title);
-    let mut parsed_title = explicit.title.clone();
+    let mut parsed_title = explicit.title.trim().to_string();
     let mut isfile = false;
     if let Some((stem, suffix)) = split_suffix(&parsed_title) {
         if options.media_exts.contains(&suffix.to_lowercase()) {
-            parsed_title = stem;
+            parsed_title = if matches!(
+                suffix.to_lowercase().as_str(),
+                ".ass" | ".srt" | ".ssa" | ".sup"
+            ) {
+                SUBTITLE_LANGUAGE_SUFFIX_RE
+                    .replace_all(&stem, "")
+                    .to_string()
+            } else {
+                stem
+            };
             isfile = true;
         }
     }
 
-    let mut meta = if is_anime(&parsed_title) {
-        parse_anime(&parsed_title, subtitle, isfile, options)
+    let normalized_title =
+        VERSIONED_ANIME_EPISODE_RE.replace_all(&parsed_title, |cap: &fancy_regex::Captures<'_>| {
+            let episode = &cap["episode"];
+            let close = &cap["close"];
+            if cap.get(0).is_some_and(|m| m.start() == 0)
+                && episode.chars().all(|ch| ch.is_ascii_digit())
+                && close.is_empty()
+            {
+                format!("E{episode}")
+            } else {
+                format!("{episode}{close}")
+            }
+        });
+    let parsing_title = super::anime_titles::strip_leading_labels(&normalized_title);
+    let mut meta = if is_anime(&parsing_title) {
+        parse_anime(&parsing_title, subtitle, isfile, options)
     } else {
-        parse_video(&parsed_title, subtitle, isfile, options)
+        parse_video(&parsing_title, subtitle, isfile, options)
     };
+    meta.anime_names_resolved = super::anime_titles::restore_names(&mut meta, &normalized_title);
+    super::anime_titles::restore_explicit_episode(&mut meta, &normalized_title);
+    if normalized_title != parsed_title {
+        meta.kind = "anime".to_string();
+    }
+    if normalized_title != parsed_title || parsing_title != normalized_title {
+        meta.org_string = Some(parsed_title);
+    }
 
     meta.title = org_title.clone();
     meta.apply_words = apply_words;
@@ -552,13 +583,19 @@ fn parse_anime(
     let original_title = title.to_string();
     let prepared = prepare_anime_title(title);
     let parsed = Parser::new(&prepared).parse().ok();
-    let parsed_origin = Parser::new(title).parse().ok();
-    let origin_name = parsed_origin
-        .as_ref()
-        .and_then(|elements| first_element(elements, Category::AnimeTitle));
-    let origin_release_group = parsed_origin
-        .as_ref()
-        .and_then(|elements| first_element(elements, Category::ReleaseGroup));
+    // 未改变原文时复用同一次 anitomy 结果，常见英文文件名无需重复扫描。
+    let parsed_origin = (prepared != title)
+        .then(|| Parser::new(title).parse().ok())
+        .flatten();
+    let origin_elements = if prepared == title {
+        parsed.as_ref()
+    } else {
+        parsed_origin.as_ref()
+    };
+    let origin_name =
+        origin_elements.and_then(|elements| first_element(elements, Category::AnimeTitle));
+    let origin_release_group =
+        origin_elements.and_then(|elements| first_element(elements, Category::ReleaseGroup));
     let matched_release_group =
         match_release_group(&original_title, options.release_group_regex.as_ref());
 
@@ -697,22 +734,20 @@ fn parse_anime(
         meta.resource_team = matched_release_group.or(origin_release_group);
         meta.customization =
             match_customization(&original_title, options.customization_regex.as_ref());
+        let mut sources = VideoState::default();
+        for source in all_elements(elements, Category::Source) {
+            append_resource_source(&mut sources, &source);
+        }
+        if !sources.source.is_empty() {
+            meta.resource_type = Some(sources.source.join(" "));
+        }
         meta.video_encode = first_element(elements, Category::VideoTerm);
         if meta
             .video_encode
             .as_deref()
             .is_some_and(|value| value.eq_ignore_ascii_case("HEVC"))
-            && original_title.contains("HEVC-10bit")
         {
-            meta.video_encode = None;
-        }
-        if meta
-            .video_encode
-            .as_deref()
-            .is_some_and(|value| value.eq_ignore_ascii_case("hevc"))
-            && original_title.contains("yuv420p10")
-        {
-            meta.video_encode = None;
+            meta.video_encode = Some("HEVC".to_string());
         }
         meta.video_bit = extract_video_bit(&original_title)
             .or_else(|| extract_video_bit(meta.video_encode.as_deref().unwrap_or_default()));
@@ -1851,7 +1886,12 @@ fn prepare_anime_title(title: &str) -> String {
                 }
             }
         }
-        return titles.join("]");
+        let mut prepared = titles.join("]");
+        // split 会丢弃末尾空项，须恢复闭括号，防止语言标签变成裸片名。
+        if title.ends_with(']') {
+            prepared.push(']');
+        }
+        return prepared;
     }
     title
 }
@@ -1869,7 +1909,7 @@ fn is_likely_subtitle_label(name: &str) -> bool {
     if name.is_empty() {
         return true;
     }
-    SUBTITLE_KEYWORD_RE.is_match(name) || ANIME_CATEGORY_LABEL_RE.is_match(name)
+    SUBTITLE_KEYWORD_RE.is_match(name) || super::anime_titles::is_label(name)
 }
 
 /// 判断发布组字段是否实际更像标题，避免误把真实片名当字幕组排除。
@@ -2346,7 +2386,8 @@ fn meta_name(meta: &MetaResult) -> Option<String> {
 fn split_suffix(value: &str) -> Option<(String, String)> {
     let path = Path::new(value);
     let suffix = path.extension()?.to_str()?;
-    let stem = path.file_stem()?.to_str()?;
+    // 标题入口允许斜杠别名；这里只去掉后缀，路径入口已单独取 file_name。
+    let stem = value.strip_suffix(suffix)?.strip_suffix('.')?;
     Some((stem.to_string(), format!(".{suffix}")))
 }
 
@@ -2379,7 +2420,7 @@ pub(super) fn is_chinese_char(ch: char) -> bool {
 }
 
 /// 标题大小写处理，匹配 Python str.title 的主要行为。
-fn to_title_case(value: &str) -> String {
+pub(super) fn to_title_case(value: &str) -> String {
     let mut result = String::new();
     let mut new_word = true;
     for ch in value.chars() {

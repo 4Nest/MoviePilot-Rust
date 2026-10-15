@@ -54,6 +54,7 @@ pub(crate) struct MetaResult {
     pub(crate) episode_group: Option<String>,
     pub(crate) fps: Option<i64>,
     pub(crate) subtitle_flag: bool,
+    pub(crate) anime_names_resolved: bool,
 }
 
 pub(crate) struct ExplicitMetaInfo {

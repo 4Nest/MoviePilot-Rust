@@ -349,5 +349,18 @@ pub(super) static KEYWORD_META_SUFFIX_RE: Lazy<Regex> = Lazy::new(|| {
 });
 pub(super) static EPISODE_VERSION_SUFFIX_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"v\d+$").unwrap());
+pub(super) static VERSIONED_ANIME_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(concat!(
+        r"(?i)(?P<episode>(?<![A-Za-z0-9])(?:S\d{1,3}E\d{1,4}|EP?\d{1,4})|",
+        r"(?:(?<=^)|(?<=[\[【._-])|(?<=\s-\s))\d{1,3})(?P<close>[\]】]?)",
+        r"(?:\s*[._-]?\s*v\d{1,3}|\s*[\[【]v\d{1,3}[\]】])(?![A-Za-z0-9])"
+    ))
+    .unwrap()
+});
 pub(super) static TOKEN_SPLIT_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\s+|\(|\)|\[|]|-|【|】|/|～|;|&|\||#|_|「|」|~").unwrap());
+
+// 外挂字幕的语言及强制字幕标记不属于媒体名，尤其不能遮住裸集号。
+pub(super) static SUBTITLE_LANGUAGE_SUFFIX_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"(?i)(?:[.](?:chs|cht|sc|tc|zh(?:[-_]hans|[-_]hant|[-_]cn|[-_]tw)?|en|eng|ja|jpn|forced|default|sdh))+$").unwrap()
+});

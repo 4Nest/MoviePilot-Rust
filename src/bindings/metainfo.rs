@@ -146,6 +146,7 @@ fn parse_streaming_platforms(options: &Bound<'_, PyDict>) -> PyResult<HashMap<St
 fn meta_to_py(py: Python<'_>, meta: &MetaResult) -> PyResult<Py<PyAny>> {
     let dict = PyDict::new(py);
     dict.set_item("kind", &meta.kind)?;
+    dict.set_item("anime_names_resolved", meta.anime_names_resolved)?;
     dict.set_item("isfile", meta.isfile)?;
     dict.set_item("title", &meta.title)?;
     dict.set_item("org_string", &meta.org_string)?;

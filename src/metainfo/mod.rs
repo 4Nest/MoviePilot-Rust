@@ -1,3 +1,4 @@
+mod anime_titles;
 mod custom_words;
 mod model;
 mod options;

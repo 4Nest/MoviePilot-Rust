@@ -213,7 +213,7 @@ meta_cases = [{
         "part": "",
         "season": "",
         "episode": "",
-        "restype": "",
+        "restype": 'WEBRip',
         "pix": "1080p",
         "video_codec": "",
         "audio_codec": "5.1",
@@ -224,7 +224,7 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "",
+        "cn_name": '诛仙',
         "en_name": "Jade Dynasty",
         "year": "2022",
         "part": "",
@@ -309,7 +309,7 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "",
+        "cn_name": '即使如此依旧步步进逼',
         "en_name": "Soredemo Ayumu Wa Yosetekuru",
         "year": "",
         "part": "",
@@ -343,7 +343,7 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "",
+        "cn_name": '寻剑',
         "en_name": "Sword Quest",
         "year": "2002",
         "part": "",
@@ -360,7 +360,7 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "组长女儿与保姆",
+        "cn_name": '组长女儿与照料专员',
         "en_name": "Kumichou Musume To Sewagakari",
         "year": "",
         "part": "",
@@ -417,7 +417,7 @@ meta_cases = [{
         "part": "",
         "season": "S01",
         "episode": "E02",
-        "restype": "",
+        "restype": 'BDRIP',
         "pix": "1080p",
         "video_codec": "H264",
         "audio_codec": "FLAC",
@@ -536,9 +536,9 @@ meta_cases = [{
         "part": "",
         "season": "S02",
         "episode": "E03",
-        "restype": "",
+        "restype": 'WEBRip',
         "pix": "1080p",
-        "video_codec": "",
+        "video_codec": 'HEVC',
         "audio_codec": "AAC",
         "fps": None
     }
@@ -547,7 +547,7 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "",
+        "cn_name": '斗破苍穹',
         "en_name": "Fights Break Sphere V",
         "year": "2022",
         "part": "",
@@ -587,9 +587,9 @@ meta_cases = [{
         "part": "",
         "season": "S01",
         "episode": "E01",
-        "restype": "",
+        "restype": 'WEBRip',
         "pix": "1080p",
-        "video_codec": "",
+        "video_codec": 'HEVC',
         "audio_codec": "EAC3",
         "fps": None
     }
@@ -604,9 +604,9 @@ meta_cases = [{
         "part": "",
         "season": "S01",
         "episode": "E01",
-        "restype": "",
+        "restype": 'WEBRip',
         "pix": "1080p",
-        "video_codec": "",
+        "video_codec": 'HEVC',
         "audio_codec": "AAC",
         "fps": None
     }
@@ -751,7 +751,7 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "",
+        "cn_name": '异世界归来的舅舅',
         "en_name": "Isekai Ojisan",
         "year": "",
         "part": "",
@@ -768,7 +768,7 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "",
+        "cn_name": '夏日重現',
         "en_name": "Summer Time Rendering",
         "year": "",
         "part": "",
@@ -938,15 +938,15 @@ meta_cases = [{
     "subtitle": "",
     "target": {
         "type": "电视剧",
-        "cn_name": "",
-        "en_name": "うたわれるもの",
+        "cn_name": '传颂之物',
+        "en_name": 'Utawarerumono',
         "year": "",
         "part": "",
         "season": "S01",
         "episode": "E01-E26",
-        "restype": "",
+        "restype": 'BDRIP',
         "pix": "1080p",
-        "video_codec": "",
+        "video_codec": 'HEVC',
         "audio_codec": "flac",
         "fps": None
     }

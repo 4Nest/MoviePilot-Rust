@@ -1,0 +1,912 @@
+{
+  "annotation": "从已有真实采集文本补做独立名称、季集和分辨率标注；未读取解析器输出。多站同文仍按输入去重。",
+  "samples": [
+    {
+      "source": "anibt",
+      "title": "[绿茶字幕组] 僵尸搜寻中 / Zombie Sagashitemasu [01][WebRip][1080p][简繁日内封]",
+      "url": "https://anibt.net/release/rel_wa66MriHA-x_",
+      "kind": "title",
+      "id": "diverse-anibt-182",
+      "expected": {
+        "cn_name": "僵尸搜寻中",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Zombie Sagashitemasu"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[綠茶字幕組] 殭屍搜尋中 / Zombie Sagashitemasu [02][WebRip][1080p][繁日內嵌]",
+      "url": "https://anibt.net/release/rel_BVhx2eo5iUqY",
+      "kind": "title",
+      "id": "diverse-anibt-183",
+      "expected": {
+        "cn_name": "殭屍搜尋中",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Zombie Sagashitemasu"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[绿茶字幕组] 僵尸搜寻中 / Zombie Sagashitemasu [02][WebRip][1080p][简日内嵌]",
+      "url": "https://anibt.net/release/rel_x4dyVeWKhqRs",
+      "kind": "title",
+      "id": "diverse-anibt-184",
+      "expected": {
+        "cn_name": "僵尸搜寻中",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Zombie Sagashitemasu"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[LoliHouse] 佐佐木与文鸟小哔 第二季 / Sasaki to P-chan S2 - 02 [WebRip 1080p HEVC-10bit AAC][简繁内封字幕]",
+      "url": "https://anibt.net/release/rel_KnjA5RNI468f",
+      "kind": "title",
+      "id": "diverse-anibt-185",
+      "expected": {
+        "cn_name": "佐佐木与文鸟小哔",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Sasaki To P-Chan",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[ToonsHub] 转生就是剑 第二季 / Reincarnated as a Sword Season 2 - 03 [ADN][1080P][CHS&CHT&JP&EN][MKV]",
+      "url": "https://anibt.net/release/rel_viJmB_nX9SEO",
+      "kind": "title",
+      "id": "diverse-anibt-186",
+      "expected": {
+        "cn_name": "转生就是剑",
+        "begin_episode": 3,
+        "resource_pix": "1080p",
+        "en_name": "Reincarnated As A Sword",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 與暗黑召喚師秘密戀愛中 / Dark Summoner to Dekiteiru - 02 (ABEMA 1920x1080 AVC AAC MKV)",
+      "url": "https://anibt.net/release/rel_Xm7Lm6ek0Cm3",
+      "kind": "title",
+      "id": "diverse-anibt-187",
+      "expected": {
+        "cn_name": "與暗黑召喚師秘密戀愛中",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Dark Summoner To Dekiteiru"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 女友的朋友 / Kanojo no Tomodachi - 02 (ABEMA 1920x1080 AVC AAC MKV)",
+      "url": "https://anibt.net/release/rel_FlVlpjE7eyl8",
+      "kind": "title",
+      "id": "diverse-anibt-188",
+      "expected": {
+        "cn_name": "女友的朋友",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Kanojo No Tomodachi"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[Nix-Raws] 重生者的魔法一定要特别 第二季 / 帰還者の魔法は特別です 第2期 / Kikansha no Mahou wa Tokubetsu desu S02E02 [CR WEB-DL 1080p AVC AAC][简繁内封]",
+      "url": "https://anibt.net/release/rel_K4-YS6_BOjlZ",
+      "kind": "title",
+      "id": "diverse-anibt-189",
+      "expected": {
+        "cn_name": "重生者的魔法一定要特别",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Kikansha No Mahou Wa Tokubetsu Desu",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[ToonsHub] 归还者的魔法要特别 第二季 / A Returner's Magic Should Be Special Season 2 - 02 [CR][1080P][DUAL][CHT&EN][MKV]",
+      "url": "https://anibt.net/release/rel_Q7VpKy7hi73B",
+      "kind": "title",
+      "id": "diverse-anibt-190",
+      "expected": {
+        "cn_name": "归还者的魔法要特别",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "A Returner'S Magic Should Be Special",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 重生者的魔法一定要特別 第二季 / Kikansha no Mahou wa Tokubetsu desu 2nd Season - 14 (CR 1920x1080 AVC AAC MKV)",
+      "url": "https://anibt.net/release/rel_Uw66MxwPCEnZ",
+      "kind": "title",
+      "id": "diverse-anibt-191",
+      "expected": {
+        "cn_name": "重生者的魔法一定要特別",
+        "begin_episode": 14,
+        "resource_pix": "1080p",
+        "en_name": "Kikansha No Mahou Wa Tokubetsu Desu",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 重生者的魔法一定要特別 第二季 / Kikansha no Mahou wa Tokubetsu desu 2nd Season - 14 (Baha 1920x1080 AVC AAC MP4)",
+      "url": "https://anibt.net/release/rel_2rIe-VoozFK0",
+      "kind": "title",
+      "id": "diverse-anibt-192",
+      "expected": {
+        "cn_name": "重生者的魔法一定要特別",
+        "begin_episode": 14,
+        "resource_pix": "1080p",
+        "en_name": "Kikansha No Mahou Wa Tokubetsu Desu",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[ANi] 重生者的魔法一定要特別 第二季 - 14 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://anibt.net/release/rel_zmMGQmkt_qc9",
+      "kind": "title",
+      "id": "diverse-anibt-193",
+      "expected": {
+        "cn_name": "重生者的魔法一定要特別",
+        "begin_episode": 14,
+        "resource_pix": "1080p",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 重生者的魔法一定要特別 第二季 / Kikansha no Mahou wa Tokubetsu desu 2nd Season - 14 (B-Global 1920x1080 HEVC AAC MKV)",
+      "url": "https://anibt.net/release/rel_RxcNIV65Hlyj",
+      "kind": "title",
+      "id": "diverse-anibt-194",
+      "expected": {
+        "cn_name": "重生者的魔法一定要特別",
+        "begin_episode": 14,
+        "resource_pix": "1080p",
+        "en_name": "Kikansha No Mahou Wa Tokubetsu Desu",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[桜都字幕组] 学生会也有洞！ / Seitokai ni mo Ana wa Aru！ [02][1080P][简体内嵌]",
+      "url": "https://anibt.net/release/rel_CSyO80RUxUMg",
+      "kind": "title",
+      "id": "diverse-anibt-195",
+      "expected": {
+        "cn_name": "学生会也有洞！",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Seitokai Ni Mo Ana Wa Aru！"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[桜都字幕组] 学生会也有洞！ / Seitokai ni mo Ana wa Aru！ [02][1080P][繁体内嵌]",
+      "url": "https://anibt.net/release/rel_TTNuggaGWbjh",
+      "kind": "title",
+      "id": "diverse-anibt-196",
+      "expected": {
+        "cn_name": "学生会也有洞！",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Seitokai Ni Mo Ana Wa Aru！"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[桜都字幕组] 学生会也有洞！ / Seitokai ni mo Ana wa Aru！ [02][1080P][简繁内封]",
+      "url": "https://anibt.net/release/rel_67VFbsomwDoD",
+      "kind": "title",
+      "id": "diverse-anibt-197",
+      "expected": {
+        "cn_name": "学生会也有洞！",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Seitokai Ni Mo Ana Wa Aru！"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[ToonsHub] 兽王武神丹帝拜恩 / Dandivine - 02 [CR][1080P][EN][MKV]",
+      "url": "https://anibt.net/release/rel_9fawI3VTv-eg",
+      "kind": "title",
+      "id": "diverse-anibt-198",
+      "expected": {
+        "cn_name": "兽王武神丹帝拜恩",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Dandivine"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 獸王武神丹帝拜恩 / Juuou Mujin Dandivine - 02 (Baha 1920x1080 AVC AAC MP4)",
+      "url": "https://anibt.net/release/rel_B2L8l2qyZ6Ns",
+      "kind": "title",
+      "id": "diverse-anibt-199",
+      "expected": {
+        "cn_name": "獸王武神丹帝拜恩",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Juuou Mujin Dandivine"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 獸王武神丹帝拜恩 / Juuou Mujin Dandivine - 02 (CR 1920x1080 AVC AAC MKV)",
+      "url": "https://anibt.net/release/rel_-65MbtblMzNO",
+      "kind": "title",
+      "id": "diverse-anibt-200",
+      "expected": {
+        "cn_name": "獸王武神丹帝拜恩",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Juuou Mujin Dandivine"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[ANi] Gattaishin Series / 獸王武神丹帝拜恩 - 02 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://anibt.net/release/rel_23pI6ON94V42",
+      "kind": "title",
+      "id": "diverse-anibt-201",
+      "expected": {
+        "cn_name": "獸王武神丹帝拜恩",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Gattaishin Series"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[Nix-Raws] 新网球王子 U-17 世界杯 决赛成员选拔赛 / The Prince of Tennis II S03E03 [CR WEB-DL 1080p AVC AAC][简繁内封]",
+      "url": "https://anibt.net/release/rel_D9n6Sn2QhYAH",
+      "kind": "title",
+      "id": "diverse-anibt-202",
+      "expected": {
+        "cn_name": "新网球王子 U-17 世界杯 决赛成员选拔赛",
+        "begin_episode": 3,
+        "resource_pix": "1080p",
+        "en_name": "The Prince Of Tennis Ii",
+        "begin_season": 3
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰 / Tenipuri: U-17 Kesshou Member Ketteisen - 03 (Baha 1920x1080 AVC AAC MP4)",
+      "url": "https://anibt.net/release/rel_hk8fTgY8Ja36",
+      "kind": "title",
+      "id": "diverse-anibt-203",
+      "expected": {
+        "cn_name": "新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰",
+        "begin_episode": 3,
+        "resource_pix": "1080p",
+        "en_name": "Tenipuri: U-17 Kesshou Member Ketteisen"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[ANi] 新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰 - 03 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://anibt.net/release/rel_nucViUYrZSlM",
+      "kind": "title",
+      "id": "diverse-anibt-204",
+      "expected": {
+        "cn_name": "新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰",
+        "begin_episode": 3,
+        "resource_pix": "1080p"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 七龍珠超：比魯斯 / Dragon Ball Super: Beerus - 01 (ABEMA 1920x1080 AVC AAC MKV)",
+      "url": "https://anibt.net/release/rel_jDaeK57JOOC-",
+      "kind": "title",
+      "id": "diverse-anibt-205",
+      "expected": {
+        "cn_name": "七龍珠超：比魯斯",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Dragon Ball Super: Beerus"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[7³ACG] 关于我转生变成史莱姆这档事 剧场版 苍海之泪篇/Tensei Shitara Slime Datta Ken: Soukai no Namida-hen 2026 [简繁字幕] BDrip 1080p x265 OPUS 2.0",
+      "url": "https://anibt.net/release/rel_FQxEO6YSkuY5",
+      "kind": "title",
+      "id": "diverse-anibt-206",
+      "expected": {
+        "cn_name": "关于我转生变成史莱姆这档事 剧场版 苍海之泪篇",
+        "begin_episode": null,
+        "resource_pix": "1080p",
+        "en_name": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+        "year": "2026"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[ToonsHub] 新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰 / Shin Tennis no Ouji-sama: U-17 WORLD CUP Kesshou Member Ketteisen - 01 [CR][1080P][DUAL][CHS&CHT&EN][MKV]",
+      "url": "https://anibt.net/release/rel_LJasypxzwwhm",
+      "kind": "title",
+      "id": "diverse-anibt-207",
+      "expected": {
+        "cn_name": "新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Shin Tennis No Ouji-Sama: U-17 World Cup Kesshou Member Ketteisen"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[黒ネズミたち] 新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰 / Tenipuri: U-17 Kesshou Member Ketteisen - 03 (CR 1920x1080 AVC AAC MKV)",
+      "url": "https://anibt.net/release/rel_YSOq1-8iSq9o",
+      "kind": "title",
+      "id": "diverse-anibt-208",
+      "expected": {
+        "cn_name": "新網球王子 U-17 WORLD CUP 世界盃決賽成員決定戰",
+        "begin_episode": 3,
+        "resource_pix": "1080p",
+        "en_name": "Tenipuri: U-17 Kesshou Member Ketteisen"
+      }
+    },
+    {
+      "source": "anibt",
+      "title": "[绿茶字幕组] 无职转生 第三季 ～到了异世界就拿出真本事～ / Mushoku Tensei S3 [14][WebRip][1080p][简繁日内封]",
+      "url": "https://anibt.net/release/rel_bpT7Nx7T6BbW",
+      "kind": "title",
+      "id": "diverse-anibt-209",
+      "expected": {
+        "cn_name": "无职转生",
+        "begin_episode": 14,
+        "resource_pix": "1080p",
+        "en_name": "Mushoku Tensei",
+        "begin_season": 3
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[TV版] 与暗黑召唤师秘密恋爱中 - 02 [简／繁] (1080p H.264 AAC SRTx2) {ダークサモナーとデキている | I'm Dating a Dark Summoner | 黑暗召唤师在地下恋爱中}",
+      "url": "https://mikanani.me/Home/Episode/ef65f3b1bc8bc69ff4e233ff73a64efa0f5fd6a8",
+      "kind": "title",
+      "id": "diverse-mikan-009",
+      "expected": {
+        "cn_name": "与暗黑召唤师秘密恋爱中",
+        "begin_episode": 2,
+        "resource_pix": "1080p"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 重生者的魔法一定要特别 第二季 / Kikansha no Mahou wa Tokubetsu desu 2nd Season - 14 (CR 1920x1080 AVC AAC MKV)",
+      "url": "https://mikanani.me/Home/Episode/c3719c85ad79915ab2f03da2ac927fc0705791b4",
+      "kind": "title",
+      "id": "diverse-mikan-011",
+      "expected": {
+        "cn_name": "重生者的魔法一定要特别",
+        "begin_episode": 14,
+        "resource_pix": "1080p",
+        "en_name": "Kikansha No Mahou Wa Tokubetsu Desu",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 新网球王子 U-17 WORLD CUP 世界杯决赛成员决定战 / Tenipuri: U-17 Kesshou Member Ketteisen - 03 (Baha 1920x1080 AVC AAC MP4)",
+      "url": "https://mikanani.me/Home/Episode/fb6223b17ed04f52b5ad21732797b5e392baacf3",
+      "kind": "title",
+      "id": "diverse-mikan-023",
+      "expected": {
+        "cn_name": "新网球王子 U-17 WORLD CUP 世界杯决赛成员决定战",
+        "begin_episode": 3,
+        "resource_pix": "1080p",
+        "en_name": "Tenipuri: U-17 Kesshou Member Ketteisen"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[7³ACG] 关于我转生变成史莱姆这档事 剧场版 苍海之泪篇/Tensei Shitara Slime Datta Ken: Soukai no Namida-hen 2026 [简繁字幕] BDrip 1080p x265 OPUS 2.0",
+      "url": "https://mikanani.me/Home/Episode/fca3107b9c95de7ef1466dbd47954be5c8961a41",
+      "kind": "title",
+      "id": "diverse-mikan-026",
+      "expected": {
+        "cn_name": "关于我转生变成史莱姆这档事 剧场版 苍海之泪篇",
+        "begin_episode": null,
+        "resource_pix": "1080p",
+        "en_name": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+        "year": "2026"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 转生就是剑 第二季 / Tensei shitara Ken deshita II - 03 (Baha 1920x1080 AVC AAC MP4)",
+      "url": "https://mikanani.me/Home/Episode/ed2de12a7dff972eebd07c9dcb9ab33f45ce253a",
+      "kind": "title",
+      "id": "diverse-mikan-032",
+      "expected": {
+        "cn_name": "转生就是剑",
+        "begin_episode": 3,
+        "resource_pix": "1080p",
+        "en_name": "Tensei Shitara Ken Deshita Ii",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 转生贵族凭鉴定技能扭转人生 第三季 / Tensei Kizoku, Kantei Skill de Nariagaru 3rd Season - 27 (ABEMA 1920x1080 AVC AAC MKV)",
+      "url": "https://mikanani.me/Home/Episode/bd8306a8433868a34d0e3fd2eb14a3fb63d3e9ee",
+      "kind": "title",
+      "id": "diverse-mikan-033",
+      "expected": {
+        "cn_name": "转生贵族凭鉴定技能扭转人生",
+        "begin_episode": 27,
+        "resource_pix": "1080p",
+        "en_name": "Tensei Kizoku, Kantei Skill De Nariagaru",
+        "begin_season": 3
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "【悠哈璃羽字幕社】[JOJO的奇妙冒险 飙马野郎/JoJo's Bizarre Adventure: Steel Ball Run][04][1080p HEVC][CHT_JP][繁日内嵌]",
+      "url": "https://mikanani.me/Home/Episode/a3fcc4e851b96ec944dec72655ab9a9c98128e0f",
+      "kind": "title",
+      "id": "diverse-mikan-038",
+      "expected": {
+        "cn_name": "JOJO的奇妙冒险 飙马野郎",
+        "begin_episode": 4,
+        "resource_pix": "1080p",
+        "en_name": "Jojo'S Bizarre Adventure: Steel Ball Run"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 魔法骑士雷阿斯 / Mahou Kishi Rayearth (2026) - 02 (ABEMA 1920x1080 AVC AAC MKV)",
+      "url": "https://mikanani.me/Home/Episode/2d689a34b8d93f50911e7e5492292e098bcfd12e",
+      "kind": "title",
+      "id": "diverse-mikan-044",
+      "expected": {
+        "cn_name": "魔法骑士雷阿斯",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Mahou Kishi Rayearth",
+        "year": "2026"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[ANi] Majikku Naito Reiāsu / 魔法骑士雷阿斯 - 02 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://mikanani.me/Home/Episode/cb76e518ccb50598652a3d0f314084ad01397e33",
+      "kind": "title",
+      "id": "diverse-mikan-045",
+      "expected": {
+        "cn_name": "魔法骑士雷阿斯",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Majikku Naito Reiāsu"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 苍蓝传承 / Aoki Denshou Welsh & Shedar - 02 (ABEMA 1920x1080 AVC AAC MKV)",
+      "url": "https://mikanani.me/Home/Episode/80617ede914848d5b1c4ad3e113b4114b0f01169",
+      "kind": "title",
+      "id": "diverse-mikan-052",
+      "expected": {
+        "cn_name": "苍蓝传承",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Aoki Denshou Welsh & Shedar"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[猎户压制部] 归还者的魔法要特别 第二季 / Kikansha no Mahou wa Tokubetsu desu S2 [01] [1080p] [简日内嵌] [2026年10月番]",
+      "url": "https://mikanani.me/Home/Episode/a596f99727b052da6b8fdd448e747defe40e6360",
+      "kind": "title",
+      "id": "diverse-mikan-057",
+      "expected": {
+        "cn_name": "归还者的魔法要特别",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Kikansha No Mahou Wa Tokubetsu Desu",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[喵萌奶茶屋&LoliHouse] 药师少女的独语 / 药屋少女的呢喃 / Kusuriya no Hitorigoto - 49 [WebRip 1080p HEVC-10bit AAC][简繁日内封字幕]",
+      "url": "https://mikanani.me/Home/Episode/ccf2ba69dce88049ccd30595769993d6fed99f82",
+      "kind": "title",
+      "id": "diverse-mikan-059",
+      "expected": {
+        "cn_name": "药师少女的独语",
+        "begin_episode": 49,
+        "resource_pix": "1080p",
+        "en_name": "Kusuriya No Hitorigoto"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 紫禁·御喵房 / Paws & Palaces - 05 (CR 1920x1080 AVC AAC MKV)",
+      "url": "https://mikanani.me/Home/Episode/5d9d45501b136ff4f1c2f74528b09dd66d5e588b",
+      "kind": "title",
+      "id": "diverse-mikan-061",
+      "expected": {
+        "cn_name": "紫禁·御喵房",
+        "begin_episode": 5,
+        "resource_pix": "1080p",
+        "en_name": "Paws & Palaces"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[LoliHouse] 冰剑的魔术师将要统一世界II / Hyouken no Majutsushi ga Sekai o Suberu II - 01 [WebRip 1080p HEVC-10bit AAC][简繁内封字幕]",
+      "url": "https://mikanani.me/Home/Episode/6eabc1372c643b51605aa2f5b3d85476a860b2c0",
+      "kind": "title",
+      "id": "diverse-mikan-062",
+      "expected": {
+        "cn_name": "冰剑的魔术师将要统一世界II",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Hyouken No Majutsushi Ga Sekai O Suberu Ii"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 侦探已经，死了。Season 2 / Tantei wa Mou, Shindeiru. Season 2 - 02 (CR 1920x1080 AVC AAC MKV)",
+      "url": "https://mikanani.me/Home/Episode/963f42555855dd2847f6daf2ced7fb5218a15470",
+      "kind": "title",
+      "id": "diverse-mikan-067",
+      "expected": {
+        "cn_name": "侦探已经，死了。",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Tantei Wa Mou, Shindeiru.",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "【悠哈璃羽字幕社&西农YUI汉化组】[暗芝居 第十七季_Yami Shibai 17][13][x264 1080p][CHS]",
+      "url": "https://mikanani.me/Home/Episode/f4bf9932ea0302de886ed08da1c8050d0b5303db",
+      "kind": "title",
+      "id": "diverse-mikan-070",
+      "expected": {
+        "cn_name": "暗芝居",
+        "begin_episode": 13,
+        "resource_pix": "1080p",
+        "en_name": "Yami Shibai 17",
+        "begin_season": 17
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[ANi] Sasaki to Pchan / 佐佐木与文鸟小哔 Season 2 - 02 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://mikanani.me/Home/Episode/f7b89b2f85869521bd8981a5dabaa21fdbc1ef28",
+      "kind": "title",
+      "id": "diverse-mikan-071",
+      "expected": {
+        "cn_name": "佐佐木与文鸟小哔",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Sasaki To Pchan",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[黒ネズミたち] 佐佐木与文鸟小哔 Season 2 / Sasaki to Pii-chan Season 2 - 02 (Baha 1920x1080 AVC AAC MP4)",
+      "url": "https://mikanani.me/Home/Episode/07941a58e44dd0b2e777ce6d330c3e2f117a3e8c",
+      "kind": "title",
+      "id": "diverse-mikan-076",
+      "expected": {
+        "cn_name": "佐佐木与文鸟小哔",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Sasaki To Pii-Chan",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[三明治摆烂组] 乱世千金倪亚·利斯顿转生为娇弱千金的弑神武人华丽无双录 / Kyouran Reijou Nia Liston / 凶乱令嬢ニア・リストン - 02 - [繁日内嵌][WebRip AVC 8bit 1080P]",
+      "url": "https://mikanani.me/Home/Episode/3ced021771b29695a1ef26829f048aff0419fa44",
+      "kind": "title",
+      "id": "diverse-mikan-091",
+      "expected": {
+        "cn_name": "乱世千金倪亚·利斯顿转生为娇弱千金的弑神武人华丽无双录",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Kyouran Reijou Nia Liston"
+      }
+    },
+    {
+      "source": "mikan",
+      "title": "[LoliHouse] 魔法少女育成计划 restart / Mahou Shoujo Ikusei Keikaku: restart - 02 [WebRip 1080p HEVC-10bit AAC][简繁内封字幕]",
+      "url": "https://mikanani.me/Home/Episode/9dd7eb5c920bddd3cd46c9256decda56d3d36008",
+      "kind": "title",
+      "id": "diverse-mikan-099",
+      "expected": {
+        "cn_name": "魔法少女育成计划 restart",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Mahou Shoujo Ikusei Keikaku: Restart"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[LoliHouse] 侦探已经，死了。 第二季 / Tantei wa Mou, Shindeiru. S2 - 02 [WebRip 1080p HEVC-10bit AAC][简繁内封字幕]",
+      "url": "https://share.dmhy.org/topics/view/728923_LoliHouse_Tantei_wa_Mou_Shindeiru_S2_-_02_WebRip_1080p_HEVC-10bit_AAC.html",
+      "kind": "title",
+      "id": "diverse-dmhy-101",
+      "expected": {
+        "cn_name": "侦探已经，死了。",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Tantei Wa Mou, Shindeiru.",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "【喵萌奶茶屋】★10月新番★[某暗部的少女共棲 / とある暗部の少女共棲 / Toaru Anbu no Item][01][1080p][繁日雙語]",
+      "url": "https://share.dmhy.org/topics/view/728918_10_Toaru_Anbu_no_Item_01_1080p.html",
+      "kind": "title",
+      "id": "diverse-dmhy-106",
+      "expected": {
+        "cn_name": "某暗部的少女共棲",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Toaru Anbu No Item"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[转发][ANi] Kamen Rider MYTH / 假面騎士 MY-TH - 02 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://share.dmhy.org/topics/view/728917_ANi_Kamen_Rider_MYTH_MY-TH_-_02_1080P_Baha_WEB-DL_AAC_AVC_CHT_MP4.html",
+      "kind": "title",
+      "id": "diverse-dmhy-107",
+      "expected": {
+        "cn_name": "假面騎士 MY-TH",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Kamen Rider Myth"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[Skymoon-Raws] 佐佐木與文鳥小嗶 Season 2 / Sasaki and Peeps Season 2 - 02 [ViuTV][WEB-DL][CHT][1080p][AVC AAC]",
+      "url": "https://share.dmhy.org/topics/view/728911_Skymoon-Raws_Season_2_Sasaki_and_Peeps_Season_2_-_02_ViuTV_WEB-DL_CHT_1080p_AVC_AAC.html",
+      "kind": "title",
+      "id": "diverse-dmhy-113",
+      "expected": {
+        "cn_name": "佐佐木與文鳥小嗶",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Sasaki And Peeps",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[Skymoon-Raws] 世界最強的魔女，就此開始 / Sekai Saikyou no Majo, Hajimemashita - 02 [ViuTV][WEB-DL][CHT][1080p][AVC AAC]",
+      "url": "https://share.dmhy.org/topics/view/728908_Skymoon-Raws_Sekai_Saikyou_no_Majo_Hajimemashita_-_02_ViuTV_WEB-DL_CHT_1080p_AVC_AAC.html",
+      "kind": "title",
+      "id": "diverse-dmhy-116",
+      "expected": {
+        "cn_name": "世界最強的魔女，就此開始",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Sekai Saikyou No Majo, Hajimemashita"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[ANi] Tensei Shitara Ken Deshita S02 / 轉生就是劍 第二季 - 03 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://share.dmhy.org/topics/view/728904_ANi_Tensei_Shitara_Ken_Deshita_S02_-_03_1080P_Baha_WEB-DL_AAC_AVC_CHT_MP4.html",
+      "kind": "title",
+      "id": "diverse-dmhy-120",
+      "expected": {
+        "cn_name": "轉生就是劍",
+        "begin_episode": 3,
+        "resource_pix": "1080p",
+        "en_name": "Tensei Shitara Ken Deshita",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "【悠哈璃羽字幕社】[JOJO的奇妙冒險 飆馬野郎/JoJo's Bizarre Adventure: Steel Ball Run][04][1080p HEVC][CHT_JP][繁日內嵌]",
+      "url": "https://share.dmhy.org/topics/view/728901_JOJO_JoJo_s_Bizarre_Adventure_Steel_Ball_Run_04_1080p_HEVC_CHT_JP.html",
+      "kind": "title",
+      "id": "diverse-dmhy-123",
+      "expected": {
+        "cn_name": "JOJO的奇妙冒險 飆馬野郎",
+        "begin_episode": 4,
+        "resource_pix": "1080p",
+        "en_name": "Jojo'S Bizarre Adventure: Steel Ball Run"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[猎户压制部] 裝備仔 / Tempal：Item no Chikara [01] [1080p] [繁日内嵌] [2026年10月番]",
+      "url": "https://share.dmhy.org/topics/view/728899_Tempal_Item_no_Chikara_01_1080p_2026_10.html",
+      "kind": "title",
+      "id": "diverse-dmhy-125",
+      "expected": {
+        "cn_name": "裝備仔",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Tempal：Item No Chikara"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[猎户压制部] 装备我最强 / 装备仔 / Tempal：Item no Chikara [01] [1080p] [简日内嵌] [2026年10月番]",
+      "url": "https://share.dmhy.org/topics/view/728897_Tempal_Item_no_Chikara_01_1080p_2026_10.html",
+      "kind": "title",
+      "id": "diverse-dmhy-127",
+      "expected": {
+        "cn_name": "装备我最强",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Tempal：Item No Chikara"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[ANi] Majikku Naito Reiāsu / 魔法騎士雷阿斯 - 02 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://share.dmhy.org/topics/view/728893_ANi_Majikku_Naito_Rei_su_-_02_1080P_Baha_WEB-DL_AAC_AVC_CHT_MP4.html",
+      "kind": "title",
+      "id": "diverse-dmhy-131",
+      "expected": {
+        "cn_name": "魔法騎士雷阿斯",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Majikku Naito Reiāsu"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[喵萌奶茶屋&LoliHouse] 药师少女的独语 / 药屋少女的呢喃 / Kusuriya no Hitorigoto - 50 [WebRip 1080p HEVC-10bit AAC][简繁日内封字幕]",
+      "url": "https://share.dmhy.org/topics/view/728887_LoliHouse_Kusuriya_no_Hitorigoto_-_50_WebRip_1080p_HEVC-10bit_AAC.html",
+      "kind": "title",
+      "id": "diverse-dmhy-137",
+      "expected": {
+        "cn_name": "药师少女的独语",
+        "begin_episode": 50,
+        "resource_pix": "1080p",
+        "en_name": "Kusuriya No Hitorigoto"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[ANi] Tantei wa Mō Shindeiru / 偵探已經，死了。Season 2 - 02 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://share.dmhy.org/topics/view/728883_ANi_Tantei_wa_M_Shindeiru_Season_2_-_02_1080P_Baha_WEB-DL_AAC_AVC_CHT_MP4.html",
+      "kind": "title",
+      "id": "diverse-dmhy-141",
+      "expected": {
+        "cn_name": "偵探已經，死了。",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Tantei Wa Mō Shindeiru",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[綠茶字幕組] 青之箱 第二季 / Ao no Hako S2 [02][WebRip][1080p][繁日內嵌]",
+      "url": "https://share.dmhy.org/topics/view/728875_Ao_no_Hako_S2_02_WebRip_1080p.html",
+      "kind": "title",
+      "id": "diverse-dmhy-149",
+      "expected": {
+        "cn_name": "青之箱",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Ao No Hako",
+        "begin_season": 2
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[jibaketa合成&音頻壓制][ViuTV粵語]爆旋陀螺X / 戰鬥陀螺X / 霸旋陀螺 极限突破 / Beyblade X - 130 [粵語+內封繁體中文字幕](WEB 1920x1080 AVC AAC SRT+PGS ViuTV YUE CHT)",
+      "url": "https://share.dmhy.org/topics/view/728865_jibaketa_ViuTV_X_X_Beyblade_X_-_130_WEB_1920x1080_AVC_AAC_SRT_PGS_ViuTV_YUE_CHT.html",
+      "kind": "title",
+      "id": "diverse-dmhy-156",
+      "expected": {
+        "cn_name": "爆旋陀螺X",
+        "begin_episode": 130,
+        "resource_pix": "1080p",
+        "en_name": "Beyblade X"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[三明治摆烂组] 亂世千金倪亞·利斯頓轉生為嬌弱千金的弒神武人華麗無雙錄 / Kyouran Reijou Nia Liston / 凶乱令嬢ニア・リストン - 02 - [繁日內嵌][WebRip AVC 8bit 1080P]",
+      "url": "https://share.dmhy.org/topics/view/728864_Kyouran_Reijou_Nia_Liston_-_02_-_WebRip_AVC_8bit_1080P.html",
+      "kind": "title",
+      "id": "diverse-dmhy-157",
+      "expected": {
+        "cn_name": "亂世千金倪亞·利斯頓轉生為嬌弱千金的弒神武人華麗無雙錄",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Kyouran Reijou Nia Liston"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[ANi] 闇機 DARK MACHINE - 01 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://share.dmhy.org/topics/view/728850_ANi_DARK_MACHINE_-_01_1080P_Baha_WEB-DL_AAC_AVC_CHT_MP4.html",
+      "kind": "title",
+      "id": "diverse-dmhy-171",
+      "expected": {
+        "cn_name": "闇機",
+        "begin_episode": 1,
+        "resource_pix": "1080p",
+        "en_name": "Dark Machine"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[Skymoon-Raws] 被放逐的作弊賦予魔術師享受隨心所欲的第二人生 / The Laid-Off Cheat-Granting Mage Enjoys a Second - 02 [ViuTV][WEB-DL][CHT][1080p][AVC AAC]",
+      "url": "https://share.dmhy.org/topics/view/728849_Skymoon-Raws_The_Laid-Off_Cheat-Granting_Mage_Enjoys_a_Second_-_02_ViuTV_WEB-DL_CHT_1080p_AVC_AAC.html",
+      "kind": "title",
+      "id": "diverse-dmhy-172",
+      "expected": {
+        "cn_name": "被放逐的作弊賦予魔術師享受隨心所欲的第二人生",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "The Laid-Off Cheat-Granting Mage Enjoys A Second"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "[ANi] Chitosekun wa Ramune Bin no Naka / 彈珠汽水瓶裡的千歲同學 - 14 [1080P][Baha][WEB-DL][AAC AVC][CHT][MP4]",
+      "url": "https://share.dmhy.org/topics/view/728848_ANi_Chitosekun_wa_Ramune_Bin_no_Naka_-_14_1080P_Baha_WEB-DL_AAC_AVC_CHT_MP4.html",
+      "kind": "title",
+      "id": "diverse-dmhy-173",
+      "expected": {
+        "cn_name": "彈珠汽水瓶裡的千歲同學",
+        "begin_episode": 14,
+        "resource_pix": "1080p",
+        "en_name": "Chitosekun Wa Ramune Bin No Naka"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "【悠哈璃羽字幕社】[FX战士久留美 / FX Senshi Kurumi-chan][02][1080p HEVC][CHS_JP&CHT_JP][简繁日内封]",
+      "url": "https://share.dmhy.org/topics/view/728844_FX_FX_Senshi_Kurumi-chan_02_1080p_HEVC_CHS_JP_CHT_JP.html",
+      "kind": "title",
+      "id": "diverse-dmhy-177",
+      "expected": {
+        "cn_name": "FX战士久留美",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Fx Senshi Kurumi-Chan"
+      }
+    },
+    {
+      "source": "dmhy",
+      "title": "【悠哈璃羽字幕社】[FX戰士久留美 / FX Senshi Kurumi-chan][02][1080p HEVC][CHT_JP][繁日內嵌]",
+      "url": "https://share.dmhy.org/topics/view/728843_FX_FX_Senshi_Kurumi-chan_02_1080p_HEVC_CHT_JP.html",
+      "kind": "title",
+      "id": "diverse-dmhy-178",
+      "expected": {
+        "cn_name": "FX戰士久留美",
+        "begin_episode": 2,
+        "resource_pix": "1080p",
+        "en_name": "Fx Senshi Kurumi-Chan"
+      }
+    }
+  ]
+}

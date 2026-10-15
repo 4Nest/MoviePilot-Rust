@@ -17,6 +17,8 @@ fn is_available() -> bool {
 /// 注册 MoviePilot Rust 扩展模块。
 #[pymodule(gil_used = false)]
 fn moviepilot_rust(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add("ANIME_EPISODE_REVISION", 1)?;
+    m.add("BT_PT_RECOGNITION_REVISION", 3)?;
     m.add_function(wrap_pyfunction!(is_available, m)?)?;
     m.add_function(wrap_pyfunction!(
         bindings::filter::parse_filter_rule_fast,

@@ -1,0 +1,3080 @@
+{
+  "date": "2026-10-15",
+  "environment": "macOS arm64, Python 3.12, release abi3-py311 wheel",
+  "manifest": {
+    "records": 10000,
+    "unique_inputs": 10000,
+    "sha256_uncompressed": "54998a82a28c768b1664d14504e8149682ce173c624d8c1072bcf04279ee8aff",
+    "origin": {
+      "real": 1447,
+      "derived": 8553
+    },
+    "source": {
+      "mikan": 799,
+      "dmhy": 1178,
+      "anibt": 369,
+      "nyaa": 7219,
+      "user-report": 18,
+      "audiences": 417
+    },
+    "entrypoint": {
+      "title": 9629,
+      "path": 371
+    },
+    "transformations": {
+      "original": 1447,
+      "outer-whitespace": 1116,
+      "resolution": 1094,
+      "subtitle-label": 1886,
+      "brackets": 670,
+      "extension": 381,
+      "leading-label": 1673,
+      "path": 371,
+      "release-group": 1007,
+      "episode-revision": 355
+    },
+    "seed_names": 326,
+    "annotation": "原始期望来自独立标注；派生输入只作列明的语义保持变换，不调用被测解析器。"
+  },
+  "field_assertions": 58949,
+  "real_sources": {
+    "mikan": 51,
+    "dmhy": 70,
+    "anibt": 24,
+    "nyaa": 1254,
+    "user-report": 1,
+    "audiences": 47
+  },
+  "corpus_revision": {
+    "initial_sha256": "1a22780c44eb04e3dd668ec06107afa1895368705e9e26265ff93373fd6513b4",
+    "initial_baseline_passed": 9722,
+    "reason": "来源审查后补做 68 条既有 Mikan/DMHY/AniBT 文本标注，增加 59 条去重真实输入。保留所有原始种子，重新平衡派生用例至一万条；旧新版均用最终语料重测。"
+  },
+  "rust": {
+    "neo2": {
+      "version": "0.2.9+neo.2",
+      "sha256_uncompressed": "54998a82a28c768b1664d14504e8149682ce173c624d8c1072bcf04279ee8aff",
+      "total": 10000,
+      "passed": 9743,
+      "groups": {
+        "origin": {
+          "real": {
+            "passed": 1425,
+            "total": 1447
+          },
+          "derived": {
+            "passed": 8318,
+            "total": 8553
+          }
+        },
+        "source": {
+          "mikan": {
+            "passed": 795,
+            "total": 799
+          },
+          "dmhy": {
+            "passed": 1174,
+            "total": 1178
+          },
+          "anibt": {
+            "passed": 353,
+            "total": 369
+          },
+          "nyaa": {
+            "passed": 6986,
+            "total": 7219
+          },
+          "user-report": {
+            "passed": 18,
+            "total": 18
+          },
+          "audiences": {
+            "passed": 417,
+            "total": 417
+          }
+        },
+        "transformation": {
+          "original": {
+            "passed": 1425,
+            "total": 1447
+          },
+          "outer-whitespace": {
+            "passed": 1093,
+            "total": 1116
+          },
+          "resolution": {
+            "passed": 1069,
+            "total": 1094
+          },
+          "subtitle-label": {
+            "passed": 1845,
+            "total": 1886
+          },
+          "brackets": {
+            "passed": 638,
+            "total": 670
+          },
+          "extension": {
+            "passed": 368,
+            "total": 381
+          },
+          "leading-label": {
+            "passed": 1621,
+            "total": 1673
+          },
+          "path": {
+            "passed": 358,
+            "total": 371
+          },
+          "release-group": {
+            "passed": 984,
+            "total": 1007
+          },
+          "episode-revision": {
+            "passed": 342,
+            "total": 355
+          }
+        },
+        "entrypoint": {
+          "title": {
+            "passed": 9385,
+            "total": 9629
+          },
+          "path": {
+            "passed": 358,
+            "total": 371
+          }
+        }
+      },
+      "failed_fields": {
+        "en_name": 229,
+        "cn_name": 44,
+        "type": 12,
+        "resource_pix": 10
+      },
+      "median_ms": 577.8109724633396,
+      "timings_ms": [
+        578.7166249938309,
+        575.1856248825788,
+        577.8109724633396,
+        578.0392363667488,
+        577.035624999553
+      ],
+      "loops": 3,
+      "repeats": 5
+    },
+    "neo3": {
+      "version": "0.2.9+neo.3",
+      "sha256_uncompressed": "54998a82a28c768b1664d14504e8149682ce173c624d8c1072bcf04279ee8aff",
+      "total": 10000,
+      "passed": 10000,
+      "groups": {
+        "origin": {
+          "real": {
+            "passed": 1447,
+            "total": 1447
+          },
+          "derived": {
+            "passed": 8553,
+            "total": 8553
+          }
+        },
+        "source": {
+          "mikan": {
+            "passed": 799,
+            "total": 799
+          },
+          "dmhy": {
+            "passed": 1178,
+            "total": 1178
+          },
+          "anibt": {
+            "passed": 369,
+            "total": 369
+          },
+          "nyaa": {
+            "passed": 7219,
+            "total": 7219
+          },
+          "user-report": {
+            "passed": 18,
+            "total": 18
+          },
+          "audiences": {
+            "passed": 417,
+            "total": 417
+          }
+        },
+        "transformation": {
+          "original": {
+            "passed": 1447,
+            "total": 1447
+          },
+          "outer-whitespace": {
+            "passed": 1116,
+            "total": 1116
+          },
+          "resolution": {
+            "passed": 1094,
+            "total": 1094
+          },
+          "subtitle-label": {
+            "passed": 1886,
+            "total": 1886
+          },
+          "brackets": {
+            "passed": 670,
+            "total": 670
+          },
+          "extension": {
+            "passed": 381,
+            "total": 381
+          },
+          "leading-label": {
+            "passed": 1673,
+            "total": 1673
+          },
+          "path": {
+            "passed": 371,
+            "total": 371
+          },
+          "release-group": {
+            "passed": 1007,
+            "total": 1007
+          },
+          "episode-revision": {
+            "passed": 355,
+            "total": 355
+          }
+        },
+        "entrypoint": {
+          "title": {
+            "passed": 9629,
+            "total": 9629
+          },
+          "path": {
+            "passed": 371,
+            "total": 371
+          }
+        }
+      },
+      "failed_fields": {},
+      "median_ms": 575.9253889943162,
+      "timings_ms": [
+        574.579208313177,
+        575.1349719551703,
+        584.9390276707709,
+        577.4989306616286,
+        575.9253889943162
+      ],
+      "loops": 3,
+      "repeats": 5
+    }
+  },
+  "backend": {
+    "neo2": {
+      "mode": "rust",
+      "version": "0.2.9+neo.2",
+      "sha256_uncompressed": "54998a82a28c768b1664d14504e8149682ce173c624d8c1072bcf04279ee8aff",
+      "total": 10000,
+      "passed": 9743,
+      "median_ms": 700.7058473924795,
+      "timings_ms": [
+        700.7058473924795,
+        700.5714722909033,
+        700.0926110583047,
+        718.601819438239,
+        703.381249991556
+      ],
+      "loops": 3,
+      "repeats": 5
+    },
+    "neo3": {
+      "mode": "rust",
+      "version": "0.2.9+neo.3",
+      "sha256_uncompressed": "54998a82a28c768b1664d14504e8149682ce173c624d8c1072bcf04279ee8aff",
+      "total": 10000,
+      "passed": 10000,
+      "median_ms": 700.9524723204473,
+      "timings_ms": [
+        700.9524723204473,
+        721.6140553355217,
+        696.2547083385289,
+        697.832819695274,
+        703.1065832513074
+      ],
+      "loops": 3,
+      "repeats": 5
+    },
+    "python": {
+      "mode": "python",
+      "version": "0.2.9+neo.3",
+      "sha256_uncompressed": "54998a82a28c768b1664d14504e8149682ce173c624d8c1072bcf04279ee8aff",
+      "total": 10000,
+      "passed": 3703,
+      "median_ms": 2966.539819414417,
+      "timings_ms": [
+        2952.578777602563,
+        2966.539819414417,
+        3056.1590692959726,
+        2963.8491249643266,
+        2973.8062359392643
+      ],
+      "loops": 3,
+      "repeats": 5
+    }
+  },
+  "baseline_failures": [
+    {
+      "id": "volume-title-005",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023",
+      "origin": "real",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028",
+      "origin": "real",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-455",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-456",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-457",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-458",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-459",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-460",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-461",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-462",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-463",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-464",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206",
+      "origin": "real",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "nyaa-213--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "简中"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "简中"
+        },
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "简中"
+        },
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "nyaa-223--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "简中"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--episode-revision:2",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--extension:.mp4",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--path:/library/电影与动画",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "nyaa-217--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "简中"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-083--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-224--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "720p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "expanded-title-111--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-090--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-089--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-088--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-095--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-093--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-086--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-149--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-144--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "mikan-050--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "diverse-dmhy-125--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "expanded-title-118--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "nyaa-213--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "繁日內嵌"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "繁日內嵌"
+        },
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "繁日內嵌"
+        },
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "nyaa-223--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "繁日內嵌"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O [Parry] Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--episode-revision:12",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--extension:.chs.ass",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--path:/media/Anime Archive",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "nyaa-217--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": null,
+          "actual": "繁日內嵌"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-224--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "2160p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-127--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "type": {
+          "expected": "电影",
+          "actual": "未知"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要[招架]一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O [Parry] Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业[话术士]世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku [Wajutsushi] De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "mikan-050--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "diverse-dmhy-125--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "nyaa-213--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "A Will Eternal",
+          "actual": "Chs Cht A Will Eternal"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Chs Cht Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-030--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Assassination Classroom The Movie Our Time",
+          "actual": "Chs Cht Assassination Classroom The Movie Our Time"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-029--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Cardcaptor Sakura The Movie",
+          "actual": "Chs Cht Cardcaptor Sakura The Movie"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-032--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Chainsaw Man The Movie Reze Arc",
+          "actual": "Chs Cht Chainsaw Man The Movie Reze Arc"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Chs Cht Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-065--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Gintama Yoshiwara In Flames",
+          "actual": "Chs Cht Gintama Yoshiwara In Flames"
+        }
+      }
+    },
+    {
+      "id": "nyaa-223--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Mairimashita! Iruma Kun",
+          "actual": "Chs Cht Mairimashita! Iruma Kun"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-022--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Mononoke Movie Chapter Iii The Curse Of The Serpent",
+          "actual": "Chs Cht Mononoke Movie Chapter Iii The Curse Of The Serpent"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-024--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Mononoke The Movie Chapter Iii The Curse Of The Serpent",
+          "actual": "Chs Cht Mononoke The Movie Chapter Iii The Curse Of The Serpent"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454--episode-revision:2",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--extension:.zh-Hant.srt",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--path:/library/电影与动画",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-003--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Saga Of Tanya The Evil: The Movie",
+          "actual": "Chs Cht Saga Of Tanya The Evil: The Movie"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-031--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "That Time I Got Reincarnated As A Slime The Movie Tears Of The Azure Sea",
+          "actual": "Chs Cht That Time I Got Reincarnated As A Slime The Movie Tears Of The Azure Sea"
+        }
+      }
+    },
+    {
+      "id": "nyaa-217--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "The Prince Of Tennis: Two Samurais, The First Game",
+          "actual": "Chs Cht The Prince Of Tennis: Two Samurais, The First Game"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "mikan-050--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "diverse-dmhy-125--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-005--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Another",
+          "actual": "Another 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-title-066--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Classroom☆Crisis",
+          "actual": "Classroom☆Crisis 10 Bit"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O [Parry] Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454--episode-revision:12",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--extension:.mp4",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--path:/media/Anime Archive",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-447--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "diverse-anibt-206--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Tensei Shitara Slime Datta Ken: Soukai No Namida-Hen",
+          "actual": "Bdrip"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-023--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "我要【招架】一切 ~反误解的世界最强想成为冒险者~",
+          "actual": "我要"
+        },
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "volume-title-028--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "cn_name": {
+          "expected": "最狂辅助职业【话术士】世界最强战团听我号令",
+          "actual": "最狂辅助职业"
+        },
+        "en_name": {
+          "expected": "Saikyou No Shienshoku 【Wajutsushi】 De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru",
+          "actual": "De Aru Ore Wa Sekai Saikyou Clan Wo Shitagaeru"
+        }
+      }
+    },
+    {
+      "id": "mikan-050--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "diverse-dmhy-125--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "resource_pix": {
+          "expected": "1080p",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-455--episode-revision:2",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--extension:.chs.ass",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--path:/library/电影与动画",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O [Parry] Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-455--episode-revision:12",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--extension:.zh-Hant.srt",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--path:/media/Anime Archive",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-023--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Mononoke Movie Chapter Iii The Curse Of The Serpent",
+          "actual": "Chs Cht Mononoke Movie Chapter Iii The Curse Of The Serpent"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-456--episode-revision:2",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--extension:.mp4",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--path:/library/电影与动画",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "expanded-title-004--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Saga Of Tanya The Evil: The Movie",
+          "actual": "Chs Cht Saga Of Tanya The Evil: The Movie"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O [Parry] Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-456--episode-revision:12",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--extension:.chs.ass",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--path:/media/Anime Archive",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-448--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-457--episode-revision:2",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--extension:.zh-Hant.srt",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--path:/library/电影与动画",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O [Parry] Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-457--episode-revision:12",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--extension:.mp4",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--leading-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--path:/media/Anime Archive",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--subtitle-label:繁日內嵌",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-458--episode-revision:2",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--extension:.chs.ass",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--leading-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--path:/library/电影与动画",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--subtitle-label:CHS&CHT",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--brackets:ascii",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O [Parry] Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-458--episode-revision:12",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--extension:.zh-Hant.srt",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--leading-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--outer-whitespace:unicode",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--path:/media/Anime Archive",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--release-group:测试发布组",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-453--resolution:2160p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-449--subtitle-label:简繁日内封字幕",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454--brackets:wide",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-459--episode-revision:2",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-451--extension:.mp4",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--leading-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454--outer-whitespace:space",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454--path:/library/电影与动画",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454--release-group:Example-Raws",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-454--resolution:720p",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    },
+    {
+      "id": "volume-file-450--subtitle-label:简中",
+      "origin": "derived",
+      "differences": {
+        "en_name": {
+          "expected": "Ore Wa Subete O 【Parry】 Suru",
+          "actual": "Suru"
+        }
+      }
+    }
+  ],
+  "checks": {
+    "rust_pytest": {
+      "passed": 12049,
+      "skipped": 1,
+      "subtests_passed": 90
+    },
+    "cargo_test_lib": 28,
+    "backend_pytest": {
+      "passed": 12934,
+      "skipped": 1
+    },
+    "old_extension": {
+      "passed": 62,
+      "skipped": 10754
+    },
+    "rust_disabled": {
+      "passed": 62,
+      "skipped": 10754
+    },
+    "pylint": "10.00/10",
+    "clippy": "passed",
+    "rustfmt": "passed"
+  },
+  "limitations": [
+    "来源计数按去重输入保留的首个来源统计，含格式派生，不代表独立采集量。",
+    "定向回归断言已标注字段，未验证外部媒体库匹配或全站总体准确率。",
+    "1,254 条真实输入来自 Nyaa，同作品不同集、字幕版本和特典分别计数；数量不等于作品数。",
+    "AniBT 24 条、audiences 47 条真实独立输入的覆盖仍有限。"
+  ]
+}
