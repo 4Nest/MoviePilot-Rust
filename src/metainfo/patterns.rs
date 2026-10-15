@@ -102,7 +102,7 @@ pub(super) static FILE_SIZE_RE: Lazy<Regex> = Lazy::new(|| {
 pub(super) static DATE_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\d{4}[\s._-]\d{1,2}[\s._-]\d{1,2}").unwrap());
 pub(super) static DIY_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"DIY")
+    RegexBuilder::new(r"(?<![A-Za-z0-9])DIY(?![A-Za-z0-9])")
         .case_insensitive(true)
         .build()
         .unwrap()
@@ -222,39 +222,25 @@ pub(super) static VIDEO_BIT_RE: Lazy<Regex> = Lazy::new(|| {
         .unwrap()
 });
 pub(super) static TITLE_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"Episode\s+(\d{1,4})")
-        .case_insensitive(true)
-        .build()
-        .unwrap()
-});
-pub(super) static SUBTITLE_HAS_SEASON_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"[全第季集话話期幕]")
+    RegexBuilder::new(r"\bEpisode\s+(\d{1,4})(?!\d)")
         .case_insensitive(true)
         .build()
         .unwrap()
 });
 pub(super) static SUBTITLE_SEASON_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"(?<![全共]\s*)[第\s]+([0-9一二三四五六七八九十S\-]+)\s*季(?!\s*[全共])")
+    RegexBuilder::new(r"(?<![全共]\s*)(?:第|[\s\[【])\s*([0-9一二三四五六七八九十百零]+)\s*(?:季?\s*[-~～–—至]\s*第?\s*([0-9一二三四五六七八九十百零]+)\s*)?季")
         .case_insensitive(true)
         .build()
         .unwrap()
 });
 pub(super) static SUBTITLE_SEASON_ALL_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"[全共]\s*([0-9一二三四五六七八九十]+)\s*季")
+    RegexBuilder::new(r"[全共]\s*([0-9一二三四五六七八九十百零]+)\s*季")
         .case_insensitive(true)
         .build()
         .unwrap()
 });
 pub(super) static SUBTITLE_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(
-        r"(?<![全共]\s*)[第\s]+([0-9一二三四五六七八九十百零EP]+)\s*[集话話期幕](?!\s*[全共])",
-    )
-    .case_insensitive(true)
-    .build()
-    .unwrap()
-});
-pub(super) static SUBTITLE_EPISODE_BETWEEN_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"[第]*\s*([0-9一二三四五六七八九十百零]+)\s*[集话話期幕]?\s*-\s*第*\s*([0-9一二三四五六七八九十百零]+)\s*[集话話期幕]")
+    RegexBuilder::new(r"(?<![全共]\s*)(?:第|[\s\[【])\s*(?:EP?)?([0-9一二三四五六七八九十百零]+)\s*(?:[集话話期幕]?\s*[-~～–—至]\s*第?\s*([0-9一二三四五六七八九十百零]+)\s*)?([集话話期幕])(?!\s*全(?![0-9一二三四五六七八九十百零]))")
         .case_insensitive(true)
         .build()
         .unwrap()
@@ -266,12 +252,28 @@ pub(super) static SUBTITLE_EPISODE_ALL_RE: Lazy<Regex> = Lazy::new(|| {
         .unwrap()
 });
 pub(super) static SUBTITLE_EPISODE_RANGE_FIN_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(
-        r"(?<!\d)\[?\s*(\d{1,4})\s*-\s*(\d{1,4})\s*(?:(?:Fin|End)(?![a-z0-9])|完结(?![\u{4e00}-\u{9fff}]))(?:\s*\](?!\d)|(?!\s*(?:\]\d|\d))\s*)",
-    )
-    .case_insensitive(true)
-    .build()
-    .unwrap()
+    RegexBuilder::new(r"(?<!\d)\[?\s*(\d{1,4})\s*[-~～–—至]\s*(\d{1,4})\s*(?:(?:Fin|End)(?![a-z0-9])|完结(?![\u{4e00}-\u{9fff}]))(?:\s*\](?!\d)|(?!\s*(?:\]\d|\d))\s*)")
+        .case_insensitive(true)
+        .build()
+        .unwrap()
+});
+pub(super) static DESCRIPTION_INFO_RE: Lazy<Regex> = Lazy::new(|| {
+    RegexBuilder::new(r"(?:剧情简介|劇情簡介|类型|類型|主演|演员|演員|导演|導演|编剧|編劇|简介|簡介|剧情|劇情|备注|備註|豆瓣|上映|首播)\s*[:：]")
+        .case_insensitive(true)
+        .build()
+        .unwrap()
+});
+pub(super) static DESCRIPTION_NOISE_RE: Lazy<Regex> = Lazy::new(|| {
+    RegexBuilder::new(r"预计|預計|计划|計劃|每周|每週|将于|將於|下周|下週|预告|預告|另见|另見|另附|附赠|附贈|前情|回顾|回顧|剧情|劇情|简介|簡介|播出进度|更新至|更新到")
+        .case_insensitive(true)
+        .build()
+        .unwrap()
+});
+pub(super) static DIY_NEGATION_RE: Lazy<Regex> = Lazy::new(|| {
+    RegexBuilder::new(r"(?:非|没有|沒有|无|無|未|无需|無需|不含|禁止|\bno|\bnot|\bnon[- ]?)\s*$")
+        .case_insensitive(true)
+        .build()
+        .unwrap()
 });
 pub(super) static DESCRIPTION_SPLIT_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"[\s/|]+").unwrap());
 pub(super) static ANIME_NAME_NOSTRING_RE: Lazy<Regex> = Lazy::new(|| {

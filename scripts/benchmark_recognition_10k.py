@@ -22,22 +22,24 @@ def main() -> None:
     """复用同一语料比较不同安装版本；失败保留输入和字段差异供审查。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--corpus", type=Path, default=Path(__file__).resolve().parents[1] / "tests/metainfo/recognition_10k.jsonl.gz")
     parser.add_argument("--loops", type=int, default=3)
     parser.add_argument("--repeats", type=int, default=5)
     args = parser.parse_args()
     if min(args.loops, args.repeats) < 1:
         parser.error("loops 和 repeats 必须大于零")
-    payload = gzip.decompress((Path(__file__).resolve().parents[1] / "tests/metainfo/recognition_10k.jsonl.gz").read_bytes())
+    payload = gzip.decompress(args.corpus.read_bytes())
     rows = [json.loads(line) for line in payload.splitlines()]
     options = build_options(["#"])
 
     def parse(row):
-        if row["entrypoint"] == "path":
+        if row.get("entrypoint", "title") == "path":
             return moviepilot_rust.parse_metainfo_path_fast(row["title"], options)
         return moviepilot_rust.parse_metainfo_fast(row["title"], row.get("subtitle"), options)
 
     groups = {key: defaultdict(lambda: {"passed": 0, "total": 0})
-              for key in ("origin", "source", "transformation", "entrypoint")}
+              for key in ("origin", "source", "transformation", "entrypoint", "category")
+              if all(key in row for row in rows)}
     failures = []
     fields = Counter()
     for row in rows:

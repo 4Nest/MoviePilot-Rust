@@ -518,19 +518,15 @@ fn parse_video(
         .as_deref()
         .map(|value| value.contains("BluRay"))
         .unwrap_or(false)
-        && (subtitle
-            .map(|value| DIY_RE.is_match(value))
-            .unwrap_or(false)
+        && (subtitle.map(has_diy_description).unwrap_or(false)
             || DIY_TITLE_RE.is_match(&original_title))
     {
         meta.resource_type = meta.resource_type.map(|value| format!("{value} DIY"));
     }
     let org_string = meta.org_string.clone().unwrap_or_default();
     init_subtitle(&mut meta, &org_string);
-    if !meta.subtitle_flag {
-        if let Some(subtitle) = subtitle {
-            init_subtitle(&mut meta, subtitle);
-        }
+    if let Some(subtitle) = subtitle {
+        init_description(&mut meta, subtitle);
     }
     let cn_name = meta.cn_name.clone();
     meta.cn_name = fix_video_name(&mut meta, cn_name);
@@ -769,10 +765,8 @@ fn parse_anime(
         init_anime_fps(&mut meta, &original_title);
         let org_string = meta.org_string.clone().unwrap_or_default();
         init_subtitle(&mut meta, &org_string);
-        if !meta.subtitle_flag {
-            if let Some(subtitle) = subtitle {
-                init_subtitle(&mut meta, subtitle);
-            }
+        if let Some(subtitle) = subtitle {
+            init_description(&mut meta, subtitle);
         }
     }
     if meta.media_type == MEDIA_TYPE_UNKNOWN && meta_name(&meta).is_none() {
@@ -1562,178 +1556,135 @@ fn init_fps(meta: &mut MetaResult, state: &mut VideoState, token: &str) {
     }
 }
 
-/// 解析副标题中的季集信息。
+/// 只读取副标题中的资源信息，剧情、计划和关联资源不参与季集识别。
+fn init_description(meta: &mut MetaResult, description: &str) {
+    for section in description.split(['|', '｜', '\n']) {
+        let header = DESCRIPTION_INFO_RE
+            .split(section)
+            .next()
+            .unwrap_or_default();
+        for alias in header.split('/') {
+            if !DESCRIPTION_NOISE_RE.is_match(alias) {
+                init_subtitle(meta, alias);
+            }
+        }
+    }
+}
+
+/// 副标题只能补充缺失字段，不能把标题的单集扩展为整季范围。
 fn init_subtitle(meta: &mut MetaResult, title_text: &str) {
     if title_text.is_empty() {
         return;
     }
     let title_text = format!(" {title_text} ");
-    if let Some(cap) = TITLE_EPISODE_RE.captures(&title_text) {
-        if let Some(episode) = cap
-            .get(1)
-            .and_then(|item| item.as_str().parse::<i64>().ok())
-        {
-            if episode >= 10000 {
-                return;
-            }
-            if meta.begin_episode.is_none() {
-                meta.begin_episode = Some(episode);
-                meta.total_episode = 1;
-            }
+    if let Some(cap) = SUBTITLE_SEASON_RE.captures(&title_text) {
+        let begin = cap.get(1).and_then(|m| cn_number_to_i64(m.as_str()));
+        let end = cap.get(2).and_then(|m| cn_number_to_i64(m.as_str()));
+        let Some(begin) = begin else { return };
+        if !(0..=100).contains(&begin) || end.is_some_and(|end| end < begin || end > 100) {
+            return;
+        }
+        // 指向其他季度的说明不能给当前季补集号。
+        if meta.begin_season.is_some_and(|season| season != begin) {
+            return;
+        }
+        if meta.begin_season.is_none() {
+            meta.begin_season = Some(begin);
+            meta.end_season = end;
+            meta.total_season = end.map_or(1, |end| end - begin + 1);
             meta.media_type = MEDIA_TYPE_TV.to_string();
             meta.subtitle_flag = true;
         }
-    } else if SUBTITLE_HAS_SEASON_EPISODE_RE.is_match(&title_text) {
-        if let Some(cap) = SUBTITLE_SEASON_ALL_RE.captures(&title_text) {
-            if let Some(total) = cap.get(1).and_then(|item| cn_number_to_i64(item.as_str())) {
-                if meta.begin_season.is_none() && meta.begin_episode.is_none() {
-                    meta.total_season = total;
-                    meta.begin_season = Some(1);
-                    meta.end_season = Some(total);
-                    meta.media_type = MEDIA_TYPE_TV.to_string();
-                    meta.subtitle_flag = true;
-                }
-            }
-            return;
-        }
-        if let Some(cap) = SUBTITLE_SEASON_RE.captures(&title_text) {
-            if let Some(seasons) = cap.get(1).map(|item| {
-                item.as_str()
-                    .to_uppercase()
-                    .replace('S', "")
-                    .trim()
-                    .to_string()
-            }) {
-                let mut parts = seasons.split('-');
-                let begin = parts.next().and_then(|item| cn_number_to_i64(item.trim()));
-                let end = parts.next().and_then(|item| cn_number_to_i64(item.trim()));
-                if begin.filter(|value| *value <= 100).is_some()
-                    && end.map(|value| value <= 100).unwrap_or(true)
-                {
-                    if meta.begin_season.is_none() {
-                        meta.begin_season = begin;
-                        meta.total_season = 1;
-                    }
-                    if meta.begin_season.is_some()
-                        && meta.end_season.is_none()
-                        && end != meta.begin_season
-                        && end.is_some()
-                    {
-                        meta.end_season = end;
-                        meta.total_season = meta.end_season.unwrap_or_default()
-                            - meta.begin_season.unwrap_or_default()
-                            + 1;
-                    }
-                    meta.media_type = MEDIA_TYPE_TV.to_string();
-                    meta.subtitle_flag = true;
-                }
-            }
-        }
-        if let Some(cap) = SUBTITLE_EPISODE_BETWEEN_RE.captures(&title_text) {
-            let begin = cap.get(1).and_then(|item| cn_number_to_i64(item.as_str()));
-            let end = cap.get(2).and_then(|item| cn_number_to_i64(item.as_str()));
-            if begin.filter(|value| *value < 10000).is_some()
-                && end.filter(|value| *value < 10000).is_some()
+    } else if let Some(cap) = SUBTITLE_SEASON_ALL_RE.captures(&title_text) {
+        if let Some(total) = cap.get(1).and_then(|m| cn_number_to_i64(m.as_str())) {
+            if (1..=100).contains(&total)
+                && meta.begin_season.is_none()
+                && meta.begin_episode.is_none()
             {
-                if meta.begin_episode.is_none() {
-                    meta.begin_episode = begin;
-                    meta.total_episode = 1;
-                }
-                if meta.begin_episode.is_some()
-                    && meta.end_episode.is_none()
-                    && end != meta.begin_episode
-                {
-                    meta.end_episode = end;
-                    meta.total_episode = meta.end_episode.unwrap_or_default()
-                        - meta.begin_episode.unwrap_or_default()
-                        + 1;
-                }
+                meta.begin_season = Some(1);
+                meta.end_season = Some(total);
+                meta.total_season = total;
                 meta.media_type = MEDIA_TYPE_TV.to_string();
                 meta.subtitle_flag = true;
-                return;
             }
         }
-        if let Some(cap) = SUBTITLE_EPISODE_RE.captures(&title_text) {
-            if let Some(episodes) = cap.get(1).map(|item| {
-                item.as_str()
-                    .to_uppercase()
-                    .replace(['E', 'P'], "")
-                    .trim()
-                    .to_string()
-            }) {
-                let mut parts = episodes.split('-');
-                let begin = parts.next().and_then(|item| cn_number_to_i64(item.trim()));
-                let end = parts.next().and_then(|item| cn_number_to_i64(item.trim()));
-                if begin.filter(|value| *value < 10000).is_some()
-                    && end.map(|value| value < 10000).unwrap_or(true)
-                {
-                    if meta.begin_episode.is_none() {
-                        meta.begin_episode = begin;
-                        meta.total_episode = 1;
-                    }
-                    if meta.begin_episode.is_some()
-                        && meta.end_episode.is_none()
-                        && end != meta.begin_episode
-                        && end.is_some()
-                    {
-                        meta.end_episode = end;
-                        meta.total_episode = meta.end_episode.unwrap_or_default()
-                            - meta.begin_episode.unwrap_or_default()
-                            + 1;
-                    }
-                    meta.media_type = MEDIA_TYPE_TV.to_string();
-                    meta.subtitle_flag = true;
-                    return;
-                }
-            }
-        }
-        if let Some(cap) = SUBTITLE_EPISODE_ALL_RE.captures(&title_text) {
-            let total = cap
-                .get(1)
-                .or_else(|| cap.get(2))
-                .and_then(|item| cn_number_to_i64(item.as_str()));
-            if let Some(total) = total {
-                if meta.begin_episode.is_none() {
-                    meta.total_episode = total;
-                    meta.media_type = MEDIA_TYPE_TV.to_string();
-                    meta.subtitle_flag = true;
-                }
-            }
-            return;
-        }
-        init_episode_range_fin(meta, &title_text);
-    } else {
-        init_episode_range_fin(meta, &title_text);
     }
-}
+    if meta.begin_episode.is_some() || meta.total_episode > 0 {
+        return;
+    }
 
-/// 识别 01-26Fin、01-24 END、01-12完结 等数字范围完结标记。
-fn init_episode_range_fin(meta: &mut MetaResult, title_text: &str) {
-    let Some(cap) = SUBTITLE_EPISODE_RANGE_FIN_RE.captures(title_text) else {
-        return;
-    };
-    let begin = cap
-        .get(1)
-        .and_then(|item| item.as_str().parse::<i64>().ok());
-    let end = cap
-        .get(2)
-        .and_then(|item| item.as_str().parse::<i64>().ok());
-    let (Some(begin), Some(end)) = (begin, end) else {
-        return;
-    };
-    if begin < 1 || begin > end || end >= 10000 {
-        return;
+    // 明确的“集/话”优先于日文别名中的“第2期”；同类标记按出现顺序取值。
+    let mut candidates = Vec::new();
+    for cap in SUBTITLE_EPISODE_RE.captures_iter(&title_text) {
+        let begin = cap.get(1).and_then(|m| cn_number_to_i64(m.as_str()));
+        let end = cap.get(2).and_then(|m| cn_number_to_i64(m.as_str()));
+        if let Some(begin) = begin {
+            if begin >= 10000 || end.is_some_and(|end| begin < 1 || end < begin || end >= 10000) {
+                continue;
+            }
+            let priority = i32::from(cap.get(3).is_some_and(|m| m.as_str() == "期"));
+            candidates.push((
+                priority,
+                cap.get(0).unwrap().start(),
+                Some(begin),
+                end,
+                end.map_or(1, |end| end - begin + 1),
+            ));
+        }
     }
-    if begin >= 1900 && end <= 2155 {
-        return;
+    for cap in TITLE_EPISODE_RE.captures_iter(&title_text) {
+        if let Some(begin) = cap.get(1).and_then(|m| m.as_str().parse::<i64>().ok()) {
+            candidates.push((0, cap.get(0).unwrap().start(), Some(begin), None, 1));
+        }
     }
-    if meta.begin_episode.is_none() {
-        meta.begin_episode = Some(begin);
-        meta.end_episode = Some(end);
-        meta.total_episode = end;
+    for cap in SUBTITLE_EPISODE_RANGE_FIN_RE.captures_iter(&title_text) {
+        let begin = cap.get(1).and_then(|m| m.as_str().parse::<i64>().ok());
+        let end = cap.get(2).and_then(|m| m.as_str().parse::<i64>().ok());
+        if let (Some(begin), Some(end)) = (begin, end) {
+            if begin >= 1 && end >= begin && end < 10000 && !(begin >= 1900 && end <= 2155) {
+                candidates.push((
+                    0,
+                    cap.get(0).unwrap().start(),
+                    Some(begin),
+                    Some(end),
+                    end - begin + 1,
+                ));
+            }
+        }
+    }
+    for cap in SUBTITLE_EPISODE_ALL_RE.captures_iter(&title_text) {
+        if let Some(total) = cap
+            .get(1)
+            .or_else(|| cap.get(2))
+            .and_then(|m| cn_number_to_i64(m.as_str()))
+        {
+            if (1..10000).contains(&total) {
+                candidates.push((2, cap.get(0).unwrap().start(), None, None, total));
+            }
+        }
+    }
+    if let Some((_, _, begin, end, total)) =
+        candidates.into_iter().min_by_key(|item| (item.0, item.1))
+    {
+        meta.begin_episode = begin;
+        meta.end_episode = end;
+        meta.total_episode = total;
         meta.media_type = MEDIA_TYPE_TV.to_string();
         meta.subtitle_flag = true;
     }
+}
+
+/// DIY 必须是独立的肯定标记，不能把“非 DIY”或简介中的词当成原盘属性。
+fn has_diy_description(description: &str) -> bool {
+    let header = DESCRIPTION_INFO_RE
+        .split(description)
+        .next()
+        .unwrap_or_default();
+    DIY_RE.find(header).is_some()
+        && DIY_RE.captures_iter(header).any(|cap| {
+            let found = cap.get(0).unwrap();
+            !DIY_NEGATION_RE.is_match(&header[..found.start()])
+        })
 }
 
 /// 规范化普通影视名称。
@@ -1789,7 +1740,15 @@ fn get_title_from_description(description: &str) -> Option<String> {
     DESCRIPTION_SPLIT_RE
         .split(description)
         .next()
-        .filter(|value| is_chinese(value))
+        .filter(|value| {
+            is_chinese(value)
+                && !super::anime_titles::is_label(value.trim_matches(['[', ']', '【', '】']))
+                && !AUXILIARY_CN_STEM_FULLMATCH_RE.is_match(value)
+                && !SEASON_EPISODE_CN_RE.is_match(value)
+                && !SUBTITLE_EPISODE_ALL_RE.is_match(value)
+                && !DESCRIPTION_INFO_RE.is_match(value)
+                && !DESCRIPTION_NOISE_RE.is_match(value)
+        })
         .map(str::to_string)
 }
 
@@ -2741,7 +2700,7 @@ mod tests {
         );
     }
 
-    /// 数字范围完结标记应写入起止集和最终总集数。
+    /// 数字范围完结标记的集数按区间长度计算，不能使用结束集号。
     #[test]
     fn parses_finished_episode_range_from_subtitle() {
         let options = ParseOptions::empty();
@@ -2759,7 +2718,7 @@ mod tests {
 
             assert_eq!(parsed.begin_episode, Some(begin));
             assert_eq!(parsed.end_episode, Some(end));
-            assert_eq!(parsed.total_episode, end);
+            assert_eq!(parsed.total_episode, end - begin + 1);
             assert_eq!(parsed.media_type, "电视剧");
         }
     }

@@ -10,7 +10,7 @@ static LABEL: Lazy<Regex> = Lazy::new(|| {
     Regex::new(concat!(
         r"(?i)^(?:(?:简|簡|繁)(?:体|體|中|日|英)?|中日|中英|双语|雙語|",
         r"字幕|内封|內封|内嵌|內嵌|外挂|外掛|中文|日文|英文|日语|日語|粤语|粵語|",
-        r"CHS|CHT|GB|BIG5|JPSC|JPTC|JP|EN|UTF8|ASS|SRT|PGS|MP4|MKV|",
+        r"国语|國語|国英|國英|国配|國配|中字|音轨|音軌|CHS|CHT|GB|BIG5|JPSC|JPTC|JP|EN|UTF8|ASS|SRT|PGS|MP4|MKV|",
         r"\s|[/&+_／-])+$"
     ))
     .unwrap()

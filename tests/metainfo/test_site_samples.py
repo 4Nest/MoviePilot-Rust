@@ -15,6 +15,20 @@ SAMPLES = [
 ]
 
 
+def test_tenipuri_chapter_preserves_series_aliases():
+    """篇章名交给媒体库匹配，U-17 和英文简称不能误当季集数字。"""
+    title = (
+        "[黒ネズミたち] 新网球王子 U-17 WORLD CUP 世界杯决赛成员决定战 / "
+        "Tenipuri: U-17 Kesshou Member Ketteisen - 03 (Baha 1920x1080 AVC AAC MP4)"
+    )
+    parsed = moviepilot_rust.parse_metainfo_fast(title, None, build_options(["#"]))
+    assert parsed["cn_name"] == "新网球王子 U-17 WORLD CUP 世界杯决赛成员决定战"
+    assert parsed["en_name"] == "Tenipuri: U-17 Kesshou Member Ketteisen"
+    assert parsed["begin_season"] is None
+    assert parsed["begin_episode"] == 3
+    assert parsed["resource_pix"] == "1080p"
+
+
 @pytest.mark.parametrize("sample", [s for s in SAMPLES if "expected" in s], ids=lambda s: s["id"])
 def test_site_sample(sample):
     """独立标注验证 BT 关键字段，PT 快照保护已有识别结果。"""
