@@ -1,6 +1,10 @@
 # MoviePilot-Rust
 
-MoviePilot Rust 加速模块。
+MoviePilot Rust 加速模块。此仓库是 `jxxghp/MoviePilot-Rust` 的 Neo 分支，
+基于 `v0.2.9`，增加 BT/PT 标题、文件名与万条离线回归支持。
+
+定制版 `0.2.9+neo.3` 通过本仓库 GitHub Release 分发，不上传到上游 PyPI 项目。
+识别行为、真实样本与格式变体口径、测试及性能结果见 [回归说明](tests/metainfo/README.md)。
 
 - PyPI 包名：`moviepilot-rust`
 - Python 导入名：`moviepilot_rust`
@@ -76,10 +80,12 @@ dist/moviepilot_rust-x.x.x.tar.gz
 
 以下命令在 MoviePilot 主项目根目录执行。
 
-安装 PyPI 版本：
+安装 Neo 固定版本（pip 自动选择当前平台 wheel）：
 
 ```shell
-.venv/bin/pip install moviepilot-rust
+.venv/bin/pip install --find-links \
+  'https://github.com/4Nest/MoviePilot-Rust/releases/expanded_assets/v0.2.9%2Bneo.3' \
+  'moviepilot-rust==0.2.9+neo.3'
 ```
 
 安装本地刚构建的 wheel：
