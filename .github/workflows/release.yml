@@ -36,6 +36,7 @@ jobs:
             echo "Tag does not match Cargo package version" >&2
             exit 1
           fi
+          test -s ".github/release-notes/${tag}.md"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - name: Run Rust checks and complete Python regression
         run: |
@@ -265,6 +266,10 @@ jobs:
           TAG_NAME: ${{ needs.prepare.outputs.tag }}
         run: |
           if ! gh release view "$TAG_NAME" >/dev/null 2>&1; then
-            gh release create "$TAG_NAME" --target "$GITHUB_SHA" --title "$TAG_NAME" --latest --generate-notes
+            gh release create "$TAG_NAME" --target "$GITHUB_SHA" --title "$TAG_NAME" --latest \
+              --notes-file ".github/release-notes/${TAG_NAME}.md"
+          else
+            gh release edit "$TAG_NAME" --title "$TAG_NAME" \
+              --notes-file ".github/release-notes/${TAG_NAME}.md"
           fi
           gh release upload "$TAG_NAME" dist/*.whl dist/*.tar.gz dist/SHA256SUMS
