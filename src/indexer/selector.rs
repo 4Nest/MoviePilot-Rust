@@ -28,7 +28,7 @@ pub(crate) enum SelectorPlan {
 }
 
 impl QuerySpec {
-    /// 编译字段查询配置，无效 selector 返回空以保持旧回退语义。
+    /// 编译字段查询配置，selector 或 remove selector 任一无法编译时返回空，由调用方整体回退。
     pub(crate) fn compile(
         selector_text: String,
         attribute: Option<String>,
@@ -40,8 +40,7 @@ impl QuerySpec {
         let remove_selectors = remove_selector_texts
             .iter()
             .map(|selector| parse_css_selector(selector))
-            .collect::<Option<Vec<_>>>()
-            .unwrap_or_default();
+            .collect::<Option<Vec<_>>>()?;
         Some(Self {
             selector_text,
             selector,
@@ -265,4 +264,34 @@ pub(super) fn selector_exists_with_plan(row: ElementRef<'_>, selector: &Selector
         .into_iter()
         .next()
         .is_some()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{QuerySpec, SelectorPlan};
+
+    /// remove 中无法编译的选择器必须使整个查询计划失效，不能静默保留应被移除的内容。
+    #[test]
+    fn unsupported_remove_selector_invalidates_query_plan() {
+        assert!(QuerySpec::compile(
+            "a".to_string(),
+            None,
+            vec!["span".to_string(), ":bogus-pseudo(".to_string()],
+            None,
+            None,
+        )
+        .is_none());
+    }
+
+    /// 合法的 field、remove 和 case selector 仍可编译。
+    #[test]
+    fn supported_selectors_compile() {
+        assert!(
+            QuerySpec::compile("a".to_string(), None, vec!["span".to_string()], None, None,)
+                .is_some()
+        );
+        assert!(SelectorPlan::compile("img.free").is_some());
+        assert!(SelectorPlan::compile("*").is_some());
+        assert!(SelectorPlan::compile(":bogus-pseudo(").is_none());
+    }
 }

@@ -85,3 +85,30 @@ class RssPublicEntryTest(TestCase):
                 }
             ],
         )
+
+    def test_rss_parser_separates_atom_detail_and_enclosure_links(self):
+        """Atom 详情和下载链接应按 rel 分离，与标签顺序、自闭合或成对写法无关。"""
+        detail = '<link rel="alternate" href="https://example.com/detail/1" />'
+        download = (
+            '<link rel="enclosure" type="application/x-bittorrent" '
+            'href="https://example.com/download/1.torrent" length="12345" />'
+        )
+        paired_detail = '<link href="https://example.com/detail/1"></link>'
+        paired_download = (
+            '<link rel="enclosure" href="https://example.com/download/1.torrent" length="12345"></link>'
+        )
+        for links in (
+            detail + download,
+            download + detail,
+            paired_detail + paired_download,
+            paired_download + paired_detail,
+        ):
+            with self.subTest(links=links):
+                xml = f"<feed><entry><title>Atom</title>{links}</entry></feed>"
+
+                result = moviepilot_rust.parse_rss_items_fast(xml, 100)
+
+                self.assertEqual(len(result), 1)
+                self.assertEqual(result[0]["link"], "https://example.com/detail/1")
+                self.assertEqual(result[0]["enclosure"], "https://example.com/download/1.torrent")
+                self.assertEqual(result[0]["size"], 12345)

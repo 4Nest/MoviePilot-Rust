@@ -1,11 +1,21 @@
 use super::regex::{Regex, RegexBuilder};
 use once_cell::sync::Lazy;
 
+// 分辨率标签中的 p/i 不是集数证据，仍保留数字、罗马数字、范围和 v2 集号。
 pub(super) static ANIME_BRACKET_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"【[+0-9XVPI-]+】\s*【")
+    RegexBuilder::new(r"【(?!\d+[PI]】)[+0-9XVPI-]+】\s*【")
         .case_insensitive(true)
         .build()
         .unwrap()
+});
+// 跟在其他括号后的独立数字/范围/修订集号（排除年份和裸分辨率数字），后面可直接接标题文本。
+pub(super) static ANIME_STANDALONE_EPISODE_BRACKET_RE: Lazy<Regex> = Lazy::new(|| {
+    RegexBuilder::new(
+        r"[\]】]\s*[\[【](?!(?:(?:19|20)\d{2}|480|576|720|1080|1440|2160|4320)[\]】])\d{1,4}(?:-\d{1,4}|v\d+)?[\]】]",
+    )
+    .case_insensitive(true)
+    .build()
+    .unwrap()
 });
 pub(super) static ANIME_DASH_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
     RegexBuilder::new(r"\s+-\s+[\dv]{1,4}\s+")
@@ -22,7 +32,7 @@ pub(super) static VIDEO_SEASON_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
     .unwrap()
 });
 pub(super) static ANIME_SQUARE_BRACKET_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"\[[+0-9XVPI-]+]\s*\[")
+    RegexBuilder::new(r"\[(?!\d+[PI]])[+0-9XVPI-]+]\s*\[")
         .case_insensitive(true)
         .build()
         .unwrap()
@@ -55,6 +65,8 @@ pub(super) static EMBY_TMDB_RE_LIST: Lazy<Vec<Regex>> = Lazy::new(|| {
         Regex::new(r"\[tmdb[=\-]\s*(\d*)\s*\]").unwrap(),
         Regex::new(r"\{tmdbid[=\-]\s*(\d*)\s*\}").unwrap(),
         Regex::new(r"\{tmdb[=\-]\s*(\d*)\s*\}").unwrap(),
+        Regex::new(r"(?i)\(tmdbid[=\-]\s*(\d*)\s*\)").unwrap(),
+        Regex::new(r"(?i)\(tmdb[=\-]\s*(\d*)\s*\)").unwrap(),
     ]
 });
 pub(super) static BANGUMI_ID_RE_LIST: Lazy<Vec<Regex>> = Lazy::new(|| {
@@ -228,7 +240,7 @@ pub(super) static TITLE_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
         .unwrap()
 });
 pub(super) static SUBTITLE_SEASON_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"(?<![全共]\s*)(?:第|[\s\[【])\s*([0-9一二三四五六七八九十百零]+)\s*(?:季?\s*[-~～–—至]\s*第?\s*([0-9一二三四五六七八九十百零]+)\s*)?季")
+    RegexBuilder::new(r"(?<!(?:不包含|不包括|不含)\s*)(?<![全共]\s*)(?:第|[\s\[【])\s*([0-9一二三四五六七八九十百零]+)\s*(?:季?\s*[-~～–—至]\s*第?\s*([0-9一二三四五六七八九十百零]+)\s*)?季")
         .case_insensitive(true)
         .build()
         .unwrap()
@@ -240,7 +252,7 @@ pub(super) static SUBTITLE_SEASON_ALL_RE: Lazy<Regex> = Lazy::new(|| {
         .unwrap()
 });
 pub(super) static SUBTITLE_EPISODE_RE: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"(?<![全共]\s*)(?:第|[\s\[【])\s*(?:EP?)?([0-9一二三四五六七八九十百零]+)\s*(?:[集话話期幕]?\s*[-~～–—至]\s*第?\s*([0-9一二三四五六七八九十百零]+)\s*)?([集话話期幕])(?!\s*全(?![0-9一二三四五六七八九十百零]))")
+    RegexBuilder::new(r"(?<!(?:不包含|不包括|不含)\s*)(?<![全共]\s*)(?:第|[\s\[【])\s*(?:EP?)?([0-9一二三四五六七八九十百零]+)\s*(?:[集话話期幕]?\s*[-~～–—至]\s*第?\s*([0-9一二三四五六七八九十百零]+)\s*)?([集话話期幕])(?!\s*全(?![0-9一二三四五六七八九十百零]))")
         .case_insensitive(true)
         .build()
         .unwrap()

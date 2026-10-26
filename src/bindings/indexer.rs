@@ -22,7 +22,9 @@ pub(crate) fn parse_indexer_torrents_fast(
     let Some(list_selector) = get_selector_text(list_config)? else {
         return Ok(None);
     };
-    let fields = parse_field_specs(fields)?;
+    let Some(fields) = parse_field_specs(fields)? else {
+        return Ok(None);
+    };
     let category = parse_category_map(category)?;
     let rows = py
         .detach(|| {
@@ -53,15 +55,17 @@ pub(crate) fn parse_indexer_subtitles_fast(
     let Some(list_selector) = get_selector_text(list_config)? else {
         return Ok(None);
     };
-    let fields = parse_field_specs(fields)?;
+    let Some(fields) = parse_field_specs(fields)? else {
+        return Ok(None);
+    };
     let rows = py
         .detach(|| parse_indexer_subtitles(html_text, domain, &list_selector, &fields, result_num))
         .map_err(|error| PyValueError::new_err(error.to_string()))?;
     rows.map(|rows| rows_to_py(py, rows)).transpose()
 }
 
-/// 将 Python 字段配置一次性编译为纯 Rust 配置。
-fn parse_field_specs(fields: &Bound<'_, PyDict>) -> PyResult<Vec<FieldSpec>> {
+/// 将 Python 字段配置一次性编译为纯 Rust 配置；任一 selector 不受支持时返回 None。
+fn parse_field_specs(fields: &Bound<'_, PyDict>) -> PyResult<Option<Vec<FieldSpec>>> {
     let mut specs = Vec::new();
     for (key, value) in fields.iter() {
         if value.is_none() {
@@ -70,22 +74,30 @@ fn parse_field_specs(fields: &Bound<'_, PyDict>) -> PyResult<Vec<FieldSpec>> {
         let Ok(config) = value.cast_into::<PyDict>() else {
             continue;
         };
+        let Some(query) = parse_query_spec(&config)? else {
+            return Ok(None);
+        };
+        let Some(case_selectors) = parse_case_selectors(&config)? else {
+            return Ok(None);
+        };
         specs.push(FieldSpec::new(
             key.extract::<String>()?,
             get_optional_string(&config, "text")?,
             get_optional_string(&config, "default_value")?,
             parse_text_filters(config.get_item("filters")?)?,
-            parse_query_spec(&config)?,
-            parse_case_selectors(&config)?,
+            query,
+            case_selectors,
         ));
     }
-    Ok(specs)
+    Ok(Some(specs))
 }
 
 /// 将 selector 配置编译为查询计划。
-fn parse_query_spec(config: &Bound<'_, PyDict>) -> PyResult<Option<QuerySpec>> {
+///
+/// 外层 None 表示 selector 或 remove selector 不受 Rust 支持；内层 None 表示字段没有 selector。
+fn parse_query_spec(config: &Bound<'_, PyDict>) -> PyResult<Option<Option<QuerySpec>>> {
     let Some(selector_text) = get_selector_text(config)? else {
-        return Ok(None);
+        return Ok(Some(None));
     };
     let remove_selectors = get_optional_string(config, "remove")?
         .map(|value| {
@@ -103,24 +115,26 @@ fn parse_query_spec(config: &Bound<'_, PyDict>) -> PyResult<Option<QuerySpec>> {
         remove_selectors,
         get_optional_i64(config, "contents")?,
         get_optional_i64(config, "index")?,
-    ))
+    )
+    .map(Some))
 }
 
-/// 编译优惠倍率字段的 case selector。
-fn parse_case_selectors(config: &Bound<'_, PyDict>) -> PyResult<Vec<(SelectorPlan, f64)>> {
+/// 编译优惠倍率字段的 case selector；任一 selector 无法编译时返回 None，由调用方整体回退。
+fn parse_case_selectors(config: &Bound<'_, PyDict>) -> PyResult<Option<Vec<(SelectorPlan, f64)>>> {
     let Some(case_obj) = config.get_item("case")? else {
-        return Ok(Vec::new());
+        return Ok(Some(Vec::new()));
     };
     let Ok(case_dict) = case_obj.cast::<PyDict>() else {
-        return Ok(Vec::new());
+        return Ok(Some(Vec::new()));
     };
     let mut selectors = Vec::new();
     for (selector, value) in case_dict.iter() {
-        if let Some(selector) = SelectorPlan::compile(&selector.extract::<String>()?) {
-            selectors.push((selector, value.extract::<f64>().unwrap_or(1.0)));
-        }
+        let Some(selector) = SelectorPlan::compile(&selector.extract::<String>()?) else {
+            return Ok(None);
+        };
+        selectors.push((selector, value.extract::<f64>().unwrap_or(1.0)));
     }
-    Ok(selectors)
+    Ok(Some(selectors))
 }
 
 /// 将 Python filters 数组转换为类型化文本过滤器。

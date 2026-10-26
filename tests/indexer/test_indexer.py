@@ -627,3 +627,51 @@ class IndexerPublicEntryTest(TestCase):
                 },
             ],
         )
+
+    def test_indexer_parsers_fall_back_when_any_selector_is_unsupported(self):
+        """字段、remove 或 case selector 任一无法编译时，整个入口应返回 None 交给 Python 回退。"""
+        html = '<table class="torrents"><tr><td><a href="details.php?id=1">Title</a></td></tr></table>'
+        list_config = {"selector": "table.torrents > tr"}
+        title = {"selector": "a"}
+        unsupported_fields = {
+            "field selector": {"title": title, "size": {"selector": "td:bogus-pseudo("}},
+            "remove selector": {"title": {"selector": "a", "remove": "span,:bogus-pseudo("}},
+            "case selector": {
+                "title": title,
+                "downloadvolumefactor": {"case": {":bogus-pseudo(": 0, "*": 1}},
+            },
+        }
+        for name, fields in unsupported_fields.items():
+            with self.subTest(entry="torrents", unsupported=name):
+                self.assertIsNone(
+                    moviepilot_rust.parse_indexer_torrents_fast(
+                        html, "https://example.com/", list_config, fields, None, 100
+                    )
+                )
+            with self.subTest(entry="subtitles", unsupported=name):
+                self.assertIsNone(
+                    moviepilot_rust.parse_indexer_subtitles_fast(
+                        html, "https://example.com/", list_config, fields, 100
+                    )
+                )
+
+    def test_indexer_parsers_keep_rust_for_static_fields_and_unmatched_selectors(self):
+        """无 selector 的静态字段和合法但未命中的 selector 不应触发回退。"""
+        html = '<table class="torrents"><tr><td><a href="details.php?id=1">Title</a></td></tr></table>'
+        fields = {
+            "title": {"selector": "a"},
+            "description": {"text": "static description"},
+            "seeders": {"default_value": "3"},
+            "size": {"selector": "span.missing"},
+            "downloadvolumefactor": {"case": {"img.free": 0, "*": 1}},
+        }
+
+        result = moviepilot_rust.parse_indexer_torrents_fast(
+            html, "https://example.com/", {"selector": "table.torrents > tr"}, fields, None, 100
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["title"], "Title")
+        self.assertEqual(result[0]["description"], "static description")
+        self.assertEqual(result[0]["downloadvolumefactor"], 1.0)

@@ -134,12 +134,15 @@ pub(crate) fn build_meta_path(path: &str, options: &ParseOptions) -> MetaResult 
     file_meta
 }
 
-/// 识别标题是否更像动漫发布名。
+/// 根据集数命名选择动漫解析器，分辨率方括号本身不构成集数证据。
 fn is_anime(name: &str) -> bool {
     if name.is_empty() {
         return false;
     }
-    if ANIME_BRACKET_RE.is_match(name) || ANIME_DASH_EPISODE_RE.is_match(name) {
+    if ANIME_BRACKET_RE.is_match(name)
+        || ANIME_STANDALONE_EPISODE_BRACKET_RE.is_match(name)
+        || ANIME_DASH_EPISODE_RE.is_match(name)
+    {
         return true;
     }
     if VIDEO_SEASON_EPISODE_RE.is_match(name) {
@@ -2549,7 +2552,8 @@ fn match_customization(title: &str, regex: Option<&Regex>) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::{
-        build_meta_info, build_release_group_regex, find_explicit_metainfo, match_release_group,
+        build_meta_info, build_release_group_regex, find_explicit_metainfo, is_anime,
+        match_release_group,
     };
     use crate::metainfo::model::MediaSource;
     use crate::metainfo::ParseOptions;
@@ -2744,5 +2748,98 @@ mod tests {
             assert_eq!(parsed.begin_episode, None, "subtitle: {subtitle}");
             assert_eq!(parsed.total_episode, 0, "subtitle: {subtitle}");
         }
+    }
+
+    /// 分辨率括号不参与动漫分类，同时保留数字、罗马数字和范围集号。
+    #[test]
+    fn distinguishes_resolution_brackets_from_episode_evidence() {
+        for (left, right) in [("[", "]"), ("【", "】")] {
+            for resolution in ["720p", "1080p", "1080i", "2160P", "1080I"] {
+                assert!(!is_anime(&format!(
+                    "某片名 2026-{left}{resolution}{right}{left}BDRIP{right}"
+                )));
+            }
+            for episode in ["01", "01-12", "01v2", "I", "IV", "1080"] {
+                assert!(is_anime(&format!(
+                    "某番剧{left}{episode}{right}{left}1080p{right}"
+                )));
+            }
+        }
+    }
+
+    /// 独立的数字或修订集号括号不依赖后面相邻的括号，分辨率括号和年份仍不算证据。
+    #[test]
+    fn standalone_episode_brackets_are_anime_evidence() {
+        assert!(is_anime(
+            "[丸子家族][樱桃小丸子第二期(Chibi Maruko-chan II)][1551]小丸子和奶奶去摘木通果&妈妈的秋假[2026.10.11][BIG5][1080P][MP4]"
+        ));
+        assert!(is_anime(
+            "【字幕组】【某番剧】【01v2】标题文本【1080P】【MP4】"
+        ));
+        assert!(is_anime("[字幕组][某番剧][01-12]标题文本[1080P][MP4]"));
+        assert!(!is_anime("某片名 [1080P][2022]文本[BDRIP]"));
+        assert!(!is_anime("某片名 2026-[1080p]文本[BDRIP]"));
+        assert!(!is_anime("某片名 [BDRIP][1080]文本[AV1]"));
+    }
+
+    /// 圆括号 TMDB 标签应提取为显式媒体身份并从标题移除。
+    #[test]
+    fn extracts_parenthesized_tmdb_id() {
+        for (title, media_id) in [
+            ("狩猎 (2022) (tmdb-727340)", "727340"),
+            ("狩猎 (2022) (tmdbid=727340)", "727340"),
+            ("狩猎 (2022) (TMDB=727340)", "727340"),
+        ] {
+            let explicit = find_explicit_metainfo(title);
+
+            assert_eq!(explicit.tmdbid.as_deref(), Some(media_id), "title: {title}");
+            assert_eq!(
+                explicit.media_source,
+                Some(MediaSource::TheMovieDb),
+                "title: {title}"
+            );
+            assert_eq!(
+                explicit.media_id.as_deref(),
+                Some(media_id),
+                "title: {title}"
+            );
+            assert_eq!(explicit.title, "狩猎 (2022)", "title: {title}");
+        }
+    }
+
+    /// 副标题中被“不包含/不含/不包括”否定的季集号不得作为资源季集号。
+    #[test]
+    fn ignores_negated_season_and_episode_in_subtitle() {
+        let options = ParseOptions::empty();
+        for subtitle in [
+            "【赛博朋克：边缘行者】 转载 不包含 第二季",
+            "赛博朋克：边缘行者 不含第2季",
+            "赛博朋克：边缘行者 不包括 第二季",
+        ] {
+            let parsed = build_meta_info(
+                "[Nekomoe kissaten&VCB-Studio] Cyberpunk Edgerunners [Ma10p_1080p]",
+                Some(subtitle),
+                &options,
+                false,
+            );
+
+            assert_eq!(parsed.begin_season, None, "subtitle: {subtitle}");
+        }
+
+        let affirmed = build_meta_info(
+            "Cyberpunk Edgerunners 2022 1080p NF WEB-DL x264 DDP5.1-GRP",
+            Some("赛博朋克：边缘行者 第一季 不包含第二季"),
+            &options,
+            false,
+        );
+        assert_eq!(affirmed.begin_season, Some(1));
+
+        let episode = build_meta_info(
+            "Some Show S01 2022 1080p WEB-DL H264-GRP",
+            Some("某剧 不含第13集"),
+            &options,
+            false,
+        );
+        assert_eq!(episode.begin_episode, None);
     }
 }

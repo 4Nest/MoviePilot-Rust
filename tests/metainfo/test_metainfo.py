@@ -123,11 +123,92 @@ class MetaInfoPublicEntryTest(TestCase):
                 1399,
             ),
             ("/movies/Avatar (2009) {tmdb-19995}/Avatar.2009.1080p.mkv", 19995),
+            ("/movies/狩猎 (2022) (tmdb-727340)/狩猎.mkv", 727340),
+            ("/movies/狩猎 (2022) (tmdbid=727340)/狩猎.mkv", 727340),
         ]
         for path, expected_tmdbid in test_paths:
             with self.subTest(path=path):
                 parsed = moviepilot_rust.parse_metainfo_path_fast(path, build_options())
                 self.assertEqual(parsed["tmdbid"], expected_tmdbid)
+
+    def test_parenthesized_tmdb_id_is_extracted_from_title(self):
+        """圆括号 TMDB 标签应从手动识别标题中提取并移除。"""
+        for title in ("狩猎 (2022) (tmdb-727340)", "狩猎 (2022) (tmdbid=727340)"):
+            with self.subTest(title=title):
+                parsed = moviepilot_rust.find_metainfo_fast(title)
+
+                self.assertEqual(parsed["metainfo"]["media_source"], "themoviedb")
+                self.assertEqual(parsed["metainfo"]["media_id"], "727340")
+                self.assertEqual(parsed["title"].strip(), "狩猎 (2022)")
+
+    def test_resolution_brackets_do_not_trigger_anime_parsing(self):
+        """分辨率方括号不能触发动漫解析，标题与路径都保留年份且不产生季集。"""
+        for left, right in (("[", "]"), ("【", "】")):
+            for separator in ("", "-"):
+                for resolution in ("720p", "1080p", "1080i", "2160P", "1080I"):
+                    title = (
+                        f"某片名 2026{separator}{left}{resolution}{right}"
+                        f"{left}BDRIP{right}{left}AV1.OPUS{right}.mkv"
+                    )
+                    for name, parsed in (
+                        ("title", moviepilot_rust.parse_metainfo_fast(title, None, build_options())),
+                        (
+                            "path",
+                            moviepilot_rust.parse_metainfo_path_fast("/movies/" + title, build_options()),
+                        ),
+                    ):
+                        with self.subTest(entry=name, title=title):
+                            self.assertEqual(parsed["kind"], "video")
+                            self.assertEqual(parsed["cn_name"], "某片名")
+                            self.assertEqual(parsed["year"], "2026")
+                            self.assertIsNone(parsed["begin_season"])
+                            self.assertIsNone(parsed["begin_episode"])
+                            self.assertEqual(parsed["resource_pix"], resolution.lower())
+
+    def test_episode_evidence_survives_resource_brackets(self):
+        """排除分辨率标签后，真正的动漫集号仍应保留。"""
+        for stem in (
+            "[字幕组] 某番剧 - 01 [1080p][BDRIP]",
+            "[字幕组][某番剧][01][1080p][BDRIP]",
+            "【字幕组】【某番剧】【01】【1080p】【BDRIP】",
+        ):
+            with self.subTest(stem=stem):
+                parsed = moviepilot_rust.parse_metainfo_fast(stem + ".mkv", None, build_options())
+
+                self.assertEqual(parsed["type"], "电视剧")
+                self.assertEqual(parsed["begin_episode"], 1)
+
+    def test_standalone_episode_bracket_keeps_anime_parsing(self):
+        """独立的数字集号括号是动漫证据，即使后面直接接标题文本而不是相邻括号。"""
+        title = (
+            "[丸子家族][樱桃小丸子第二期(Chibi Maruko-chan II)][1551]"
+            "小丸子和奶奶去摘木通果&妈妈的秋假[2026.10.11][BIG5][1080P][MP4]"
+        )
+
+        parsed = moviepilot_rust.parse_metainfo_fast(title, None, build_options())
+
+        self.assertEqual(parsed["kind"], "anime")
+        self.assertEqual(parsed["cn_name"], "樱桃小丸子")
+        self.assertIsNone(parsed["en_name"])
+        self.assertEqual(parsed["begin_season"], 2)
+        self.assertEqual(parsed["begin_episode"], 1551)
+
+    def test_negated_subtitle_season_and_episode_are_ignored(self):
+        """副标题否定的季集不得作为资源季集，肯定项保留。"""
+        title = "Cyberpunk Edgerunners 2022 1080p NF WEB-DL x264 DDP5.1-GRP"
+        for subtitle in ("不包含 第二季", "不含第2季", "不包括 第二季"):
+            with self.subTest(subtitle=subtitle):
+                parsed = moviepilot_rust.parse_metainfo_fast(title, subtitle, build_options())
+
+                self.assertIsNone(parsed["begin_season"])
+        parsed = moviepilot_rust.parse_metainfo_fast(
+            title, "赛博朋克：边缘行者 第一季 不包含第二季", build_options()
+        )
+        self.assertEqual(parsed["begin_season"], 1)
+        parsed = moviepilot_rust.parse_metainfo_fast(
+            "Some Show S01 2022 1080p WEB-DL H264-GRP", "某剧 不含第13集", build_options()
+        )
+        self.assertIsNone(parsed["begin_episode"])
 
     def test_metainfopath_with_custom_words(self):
         """同步后端 MetaInfoPath 自定义识别词用例。"""

@@ -1,7 +1,7 @@
 use super::model::{RssError, RssItem};
 use chrono::{DateTime, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone, Utc};
 use quick_xml::events::{BytesRef, BytesStart, Event};
-use quick_xml::Reader;
+use quick_xml::{Reader, XmlVersion};
 
 #[derive(Clone, Copy)]
 enum TextField {
@@ -25,7 +25,7 @@ pub(crate) fn parse_rss_items(xml_text: &str, max_items: usize) -> Result<Vec<Rs
         match reader.read_event() {
             Ok(Event::Start(event)) => {
                 let name = event.name();
-                let local = local_name(name.as_ref());
+                let local = local_name(name.as_ref().as_bytes());
                 if current_item.is_none() && is_item_node(local) {
                     current_item = Some(RssItem::default());
                     item_depth = 1;
@@ -40,21 +40,20 @@ pub(crate) fn parse_rss_items(xml_text: &str, max_items: usize) -> Result<Vec<Rs
             }
             Ok(Event::Empty(event)) => {
                 let name = event.name();
-                let local = local_name(name.as_ref());
+                let local = local_name(name.as_ref().as_bytes());
                 if let Some(item) = current_item.as_mut() {
                     handle_empty_field(&event, local, item)?;
                 }
             }
             Ok(Event::Text(event)) => {
                 if let (Some(item), Some((field, _))) = (current_item.as_mut(), current_field) {
-                    let text = event.decode().map_err(RssError::from_display)?;
-                    append_text_field(item, field, text.as_ref());
+                    // 输入按 UTF-8 字符串读取，实体引用由 GeneralRef 事件单独处理
+                    append_text_field(item, field, event.as_ref());
                 }
             }
             Ok(Event::CData(event)) => {
                 if let (Some(item), Some((field, _))) = (current_item.as_mut(), current_field) {
-                    let text = event.decode().map_err(RssError::from_display)?;
-                    append_text_field(item, field, text.as_ref());
+                    append_text_field(item, field, event.as_ref());
                 }
             }
             Ok(Event::GeneralRef(event)) => {
@@ -65,7 +64,7 @@ pub(crate) fn parse_rss_items(xml_text: &str, max_items: usize) -> Result<Vec<Rs
             }
             Ok(Event::End(event)) => {
                 let name = event.name();
-                let local = local_name(name.as_ref());
+                let local = local_name(name.as_ref().as_bytes());
                 if current_item.is_some() && item_depth == 1 && is_item_node(local) {
                     if let Some(item) = current_item.take() {
                         if let Some(item) = finalize_item(item) {
@@ -114,8 +113,9 @@ fn handle_start_field(
         return Ok(());
     }
 
-    if local.eq_ignore_ascii_case(b"link") {
-        fill_link_from_href(event, item)?;
+    if local.eq_ignore_ascii_case(b"link") && fill_atom_link(event, item)? {
+        // Atom link 的地址在 href 属性中，不再采集标签文本。
+        return Ok(());
     }
 
     if current_field.is_none() {
@@ -135,7 +135,7 @@ fn handle_empty_field(
     if local.eq_ignore_ascii_case(b"enclosure") {
         fill_enclosure(event, item)?;
     } else if local.eq_ignore_ascii_case(b"link") {
-        fill_link_from_href(event, item)?;
+        fill_atom_link(event, item)?;
     }
     Ok(())
 }
@@ -185,8 +185,7 @@ fn resolve_general_ref(event: &BytesRef<'_>) -> Result<String, RssError> {
     if let Some(value) = event.resolve_char_ref().map_err(RssError::from_display)? {
         return Ok(value.to_string());
     }
-    let name = event.decode().map_err(RssError::from_display)?;
-    let resolved = match name.as_ref() {
+    let resolved = match event.as_ref() {
         "amp" => "&".to_string(),
         "lt" => "<".to_string(),
         "gt" => ">".to_string(),
@@ -199,10 +198,19 @@ fn resolve_general_ref(event: &BytesRef<'_>) -> Result<String, RssError> {
 
 /// 从 enclosure 标签读取下载链接和大小。
 fn fill_enclosure(event: &BytesStart<'_>, item: &mut RssItem) -> Result<(), RssError> {
+    fill_enclosure_from_attr(event, item, b"url")
+}
+
+/// 按指定地址属性读取下载链接，并同步读取 length 大小。
+fn fill_enclosure_from_attr(
+    event: &BytesStart<'_>,
+    item: &mut RssItem,
+    url_attr: &[u8],
+) -> Result<(), RssError> {
     if !item.enclosure.is_empty() {
         return Ok(());
     }
-    if let Some(url) = attr_value(event, b"url")? {
+    if let Some(url) = attr_value(event, url_attr)? {
         item.enclosure = url;
     }
     if let Some(length) = attr_value(event, b"length")? {
@@ -211,24 +219,27 @@ fn fill_enclosure(event: &BytesStart<'_>, item: &mut RssItem) -> Result<(), RssE
     Ok(())
 }
 
-/// 从 Atom link 的 href 属性读取页面地址。
-fn fill_link_from_href(event: &BytesStart<'_>, item: &mut RssItem) -> Result<(), RssError> {
-    if !item.link.is_empty() {
-        return Ok(());
-    }
-    if let Some(href) = attr_value(event, b"href")? {
+/// 按 Atom rel 分离详情页和 enclosure 下载地址；返回该标签是否带 href。
+fn fill_atom_link(event: &BytesStart<'_>, item: &mut RssItem) -> Result<bool, RssError> {
+    let Some(href) = attr_value(event, b"href")? else {
+        return Ok(false);
+    };
+    let rel = attr_value(event, b"rel")?.unwrap_or_default();
+    if rel.eq_ignore_ascii_case("enclosure") {
+        fill_enclosure_from_attr(event, item, b"href")?;
+    } else if (rel.is_empty() || rel.eq_ignore_ascii_case("alternate")) && item.link.is_empty() {
         item.link = href;
     }
-    Ok(())
+    Ok(true)
 }
 
 /// 读取并反转义指定属性值。
 fn attr_value(event: &BytesStart<'_>, name: &[u8]) -> Result<Option<String>, RssError> {
     for attr in event.attributes().with_checks(false) {
         let attr = attr.map_err(RssError::from_display)?;
-        if attr.key.as_ref().eq_ignore_ascii_case(name) {
+        if attr.key.as_ref().as_bytes().eq_ignore_ascii_case(name) {
             let value = attr
-                .decode_and_unescape_value(event.decoder())
+                .normalized_value(XmlVersion::Implicit1_0)
                 .map_err(RssError::from_display)?;
             return Ok(Some(value.trim().to_string()));
         }
@@ -359,5 +370,54 @@ mod tests {
         let items = parse_rss_items(xml, 10).expect("valid rss");
 
         assert!(items.is_empty());
+    }
+
+    /// 验证 Atom 详情链接与 enclosure 下载链接不受标签顺序影响。
+    #[test]
+    fn atom_links_split_detail_and_enclosure_in_any_order() {
+        let detail = r#"<link rel="alternate" href="https://example.com/detail/1"/>"#;
+        let download = r#"<link rel="enclosure" type="application/x-bittorrent" href="https://example.com/download/1.torrent" length="12345"/>"#;
+        for links in [format!("{detail}{download}"), format!("{download}{detail}")] {
+            let xml = format!("<feed><entry><title>Movie</title>{links}</entry></feed>");
+            let items = parse_rss_items(&xml, 10).expect("valid atom");
+
+            assert_eq!(items.len(), 1);
+            assert_eq!(items[0].link, "https://example.com/detail/1");
+            assert_eq!(items[0].enclosure, "https://example.com/download/1.torrent");
+            assert_eq!(items[0].size, 12345);
+        }
+    }
+
+    /// 验证没有 rel 的 Atom link 视为详情地址。
+    #[test]
+    fn atom_link_without_rel_is_detail() {
+        let xml = r#"<feed><entry><title>Movie</title><link href="https://example.com/detail/2"/><link rel="enclosure" href="https://example.com/download/2.torrent" length="7"/></entry></feed>"#;
+        let items = parse_rss_items(xml, 10).expect("valid atom");
+
+        assert_eq!(items[0].link, "https://example.com/detail/2");
+        assert_eq!(items[0].enclosure, "https://example.com/download/2.torrent");
+        assert_eq!(items[0].size, 7);
+    }
+
+    /// 验证成对写法的 Atom link 与自闭合写法行为一致。
+    #[test]
+    fn atom_paired_links_split_detail_and_enclosure() {
+        let xml = r#"<feed><entry><title>Movie</title><link rel="enclosure" href="https://example.com/download/3.torrent" length="99"></link><link rel="alternate" href="https://example.com/detail/3"></link></entry></feed>"#;
+        let items = parse_rss_items(xml, 10).expect("valid atom");
+
+        assert_eq!(items[0].link, "https://example.com/detail/3");
+        assert_eq!(items[0].enclosure, "https://example.com/download/3.torrent");
+        assert_eq!(items[0].size, 99);
+    }
+
+    /// 验证只有 enclosure 链接时不会把下载地址写入详情链接。
+    #[test]
+    fn atom_enclosure_only_does_not_fill_detail_link() {
+        let xml = r#"<feed><entry><title>Movie</title><link rel="enclosure" href="https://example.com/download/4.torrent" length="5"/></entry></feed>"#;
+        let items = parse_rss_items(xml, 10).expect("valid atom");
+
+        assert_eq!(items[0].link, "");
+        assert_eq!(items[0].enclosure, "https://example.com/download/4.torrent");
+        assert_eq!(items[0].size, 5);
     }
 }
