@@ -15,6 +15,12 @@ def test_extension_is_available() -> None:
     assert moviepilot_rust.is_available() is True
 
 
+def test_revision_constants_match_neo_contract() -> None:
+    """NEO 专有修订常量必须保持稳定并随本次识别升级递增。"""
+    assert moviepilot_rust.ANIME_EPISODE_REVISION == 1
+    assert moviepilot_rust.BT_PT_RECOGNITION_REVISION == 5
+
+
 @pytest.mark.skipif(
     sysconfig.get_config_var("Py_GIL_DISABLED") != 1,
     reason="requires a free-threaded Python build",

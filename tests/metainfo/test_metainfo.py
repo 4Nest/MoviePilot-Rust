@@ -132,7 +132,7 @@ class MetaInfoPublicEntryTest(TestCase):
                 self.assertEqual(parsed["tmdbid"], expected_tmdbid)
 
     def test_parenthesized_tmdb_id_is_extracted_from_title(self):
-        """圆括号 TMDB 标签应从手动识别标题中提取并移除。"""
+        """圆括号 TMDB 标签应从手动识别标题中提取并移除，空数字标签不误删。"""
         for title in ("狩猎 (2022) (tmdb-727340)", "狩猎 (2022) (tmdbid=727340)"):
             with self.subTest(title=title):
                 parsed = moviepilot_rust.find_metainfo_fast(title)
@@ -140,6 +140,77 @@ class MetaInfoPublicEntryTest(TestCase):
                 self.assertEqual(parsed["metainfo"]["media_source"], "themoviedb")
                 self.assertEqual(parsed["metainfo"]["media_id"], "727340")
                 self.assertEqual(parsed["title"].strip(), "狩猎 (2022)")
+
+        for invalid in ("狩猎 (2022) (tmdb-)", "狩猎 (2022) (tmdbid=   )"):
+            with self.subTest(invalid=invalid):
+                parsed = moviepilot_rust.find_metainfo_fast(invalid)
+                self.assertIsNone(parsed["metainfo"]["media_source"])
+                self.assertIsNone(parsed["metainfo"]["media_id"])
+                self.assertEqual(parsed["title"], invalid)
+
+    def test_movie_title_after_release_group(self):
+        """完整公开发布名不得因 Movie 片名词回退到字幕组名。"""
+        for subtitle in ("CHS", "CHT"):
+            title = (
+                "[黑白字幕组]我心里危险的东西剧场版 / "
+                "Boku no Kokoro no Yabai Yatsu Movie "
+                f"[2026] [WEB-DL 1080p AVC-8bit AAC][{subtitle}]"
+                "(检索用：我内心的糟糕念头 剧场版)"
+            )
+            for custom_group in (False, True):
+                options = dict(build_options())
+                if custom_group:
+                    options["release_groups"] += "|黑白字幕组"
+                with self.subTest(subtitle=subtitle, custom_group=custom_group):
+                    parsed = moviepilot_rust.parse_metainfo_fast(title, "", options)
+                    self.assertEqual(parsed["cn_name"], "我心里危险的东西剧场版")
+                    self.assertEqual(
+                        parsed["en_name"], "Boku No Kokoro No Yabai Yatsu Movie"
+                    )
+                    self.assertNotEqual(parsed["cn_name"], "黑白字幕组")
+                    self.assertEqual(parsed["type"], "电影")
+                    self.assertEqual(parsed["year"], "2026")
+                    self.assertEqual(parsed["resource_pix"], "1080p")
+                    self.assertEqual(parsed["video_encode"], "AVC")
+                    self.assertEqual(parsed["video_bit"], "8bit")
+                    self.assertEqual(parsed["audio_encode"], "AAC")
+                    self.assertEqual(parsed["resource_team"], "黑白字幕组")
+                    self.assertIsNone(parsed["begin_season"])
+                    self.assertIsNone(parsed["begin_episode"])
+
+    def test_category_words_in_multibracket_titles(self):
+        """中英文和双语标题可包含分类词，独立分类标签仍不应成为片名。"""
+        cases = [
+            ("[星空电影 / Starry Sky Movie][2026]", "星空电影", "Starry Sky Movie", "电影", None, None),
+            ("[Starry Sky Movie / 星空电影][2026]", "星空电影", "Starry Sky Movie", "电影", None, None),
+            ("[Starry Sky Movie][2026]", None, "Starry Sky Movie", "电影", None, None),
+            ("[动画之旅][2026]", "动画之旅", None, "电影", None, None),
+            ("[Movie][星空之旅 / Starry Sky][2026]", "星空之旅", "Starry Sky", "电影", None, None),
+            (
+                "[TV Series][动画之旅 / Animation Journey][2026][01]",
+                "动画之旅",
+                "Animation Journey",
+                "电视剧",
+                None,
+                1,
+            ),
+            ("[TV Animation Club][2026][01]", None, "Tv Animation Club", "电视剧", None, 1),
+            (" 星空之旅 / Starry Sky S02E03 [2026]", "星空之旅", "Starry Sky", "电视剧", 2, 3),
+        ]
+        options = dict(build_options())
+        options["release_groups"] += "|测试字幕组"
+        for body, expected_cn, expected_en, media_type, season, episode in cases:
+            title = f"[测试字幕组]{body}[1080p][AVC][AAC][CHS]"
+            with self.subTest(title=title):
+                parsed = moviepilot_rust.parse_metainfo_fast(title, "", options)
+                self.assertEqual(parsed["cn_name"], expected_cn)
+                self.assertEqual(parsed["en_name"], expected_en)
+                self.assertEqual(parsed["year"], "2026")
+                self.assertEqual(parsed["type"], media_type)
+                self.assertEqual(parsed["begin_season"], season)
+                self.assertEqual(parsed["begin_episode"], episode)
+                self.assertEqual(parsed["resource_pix"], "1080p")
+                self.assertEqual(parsed["resource_team"], "测试字幕组")
 
     def test_resolution_brackets_do_not_trigger_anime_parsing(self):
         """分辨率方括号不能触发动漫解析，标题与路径都保留年份且不产生季集。"""
@@ -326,6 +397,60 @@ class MetaInfoPublicEntryTest(TestCase):
         self.assertEqual(parsed["cn_name"], "新名")
         self.assertEqual(_format_episode(parsed), "E04")
         self.assertEqual(parsed["apply_words"], custom_words)
+
+    def test_custom_words_episode_offset_applies_to_subtitle(self):
+        """标题无集数时，自定义偏移应只修改副标题中的集数而保留季数。"""
+        custom_words = [
+            "BLEACH Thousand-Year Blood War S04 => BLEACH 2004 S02 && S02 <> 1080p >> EP+40"
+        ]
+        parsed = moviepilot_rust.parse_metainfo_fast(
+            "BLEACH Thousand-Year Blood War S04 1080p Disney+ WEB-DL AAC 2.0 H.264-CHDWEB",
+            "死神 千年血战篇 -祸进谭- 第四季 第8集 ...",
+            build_options(custom_words=custom_words),
+        )
+
+        self.assertEqual(parsed["begin_season"], 2)
+        self.assertEqual(parsed["begin_episode"], 48)
+        self.assertEqual(parsed["subtitle"], "死神 千年血战篇 -祸进谭- 第四季 第48集 ...")
+        self.assertEqual(parsed["apply_words"], custom_words)
+
+    def test_preserves_title_token_matching_subtitle_extension(self):
+        """片名中与字幕扩展名同名的词元应完整保留，真实字幕后缀仍正常剥离。"""
+        title = "Kick-Ass.2010.PROPER.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos-FGT.mkv"
+        options = build_options()
+        parsed = moviepilot_rust.parse_metainfo_fast(title, None, options)
+        parsed_path = moviepilot_rust.parse_metainfo_path_fast(f"/movies/{title}", options)
+        parsed_sub = moviepilot_rust.parse_metainfo_fast(
+            "Kick-Ass.2010.1080p.BluRay.x264.chs.ass", None, options
+        )
+
+        self.assertEqual(parsed["en_name"], "Kick Ass")
+        self.assertEqual(parsed["year"], "2010")
+        self.assertEqual(parsed_path["en_name"], "Kick Ass")
+        self.assertEqual(parsed_path["year"], "2010")
+        self.assertEqual(parsed_sub["en_name"], "Kick Ass")
+        self.assertEqual(parsed_sub["year"], "2010")
+        self.assertTrue(parsed_sub["isfile"])
+
+    def test_metainfopath_merges_web_source_episode_group_and_leading_group(self):
+        """路径合并应继承流媒体平台与剧集组，且连续分类括号优先取首段连字符字幕组。"""
+        group_id = "5ad0ec240e0a26303f00d84d"
+        options = {**build_options(), "streaming_platforms": {"AMZN": "Amazon"}}
+        parsed = moviepilot_rust.parse_metainfo_path_fast(
+            f"/Show 2024 AMZN WEB-DL {{[tmdbid=46195;type=tv;g={group_id};s=1]}}/Show.S01E01.mkv",
+            options,
+        )
+        self.assertEqual(parsed["web_source"], "Amazon")
+        self.assertEqual(parsed["episode_group"], group_id)
+        self.assertEqual(parsed["media_source"], "themoviedb")
+        self.assertEqual(parsed["media_id"], "46195")
+
+        anime = moviepilot_rust.parse_metainfo_fast(
+            "[GM-Team][国漫][寻剑 第1季][Sword Quest Season 1][2002][02][AVC][GB][1080P]",
+            None,
+            build_options(),
+        )
+        self.assertEqual(anime["resource_team"], "GM-Team")
 
     def test_custom_words_episode_offset_supports_multiplication_expression(self):
         """集数偏移表达式应支持乘法和连续运算。"""

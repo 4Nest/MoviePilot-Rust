@@ -6,12 +6,18 @@ use super::regex::Regex;
 use anitomy_pure::elements::Category;
 use anitomy_pure::Parser;
 use golia_pinyin::{is_valid_syllable, segment};
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
 
 const MEDIA_TYPE_MOVIE: &str = "电影";
 const MEDIA_TYPE_TV: &str = "电视剧";
 const MEDIA_TYPE_UNKNOWN: &str = "未知";
+
+#[derive(Clone, Copy, Default)]
+struct SubtitleSeasonGuard {
+    offset_applied: bool,
+    origin_season: Option<i64>,
+}
 
 /// 构建标题入口的完整元信息。
 pub(crate) fn build_meta_info(
@@ -21,7 +27,18 @@ pub(crate) fn build_meta_info(
     with_original_name: bool,
 ) -> MetaResult {
     let org_title = title.to_string();
-    let (prepared_title, apply_words) = prepare_words(title, &options.custom_words);
+    let (prepared_title, prepared_subtitle, apply_words) =
+        prepare_words(title, subtitle, &options.custom_words);
+    let subtitle_guard = if apply_words.is_empty() {
+        SubtitleSeasonGuard::default()
+    } else {
+        SubtitleSeasonGuard {
+            offset_applied: prepared_subtitle.as_deref() != subtitle,
+            origin_season: (prepared_title != title)
+                .then(|| extract_quick_title_season(title))
+                .flatten(),
+        }
+    };
     let explicit = find_explicit_metainfo(&prepared_title);
     let mut parsed_title = explicit.title.trim().to_string();
     let mut isfile = false;
@@ -56,9 +73,21 @@ pub(crate) fn build_meta_info(
         });
     let parsing_title = super::anime_titles::strip_leading_labels(&normalized_title);
     let mut meta = if is_anime(&parsing_title) {
-        parse_anime(&parsing_title, subtitle, isfile, options)
+        parse_anime(
+            &parsing_title,
+            prepared_subtitle.as_deref(),
+            isfile,
+            options,
+            subtitle_guard,
+        )
     } else {
-        parse_video(&parsing_title, subtitle, isfile, options)
+        parse_video(
+            &parsing_title,
+            prepared_subtitle.as_deref(),
+            isfile,
+            options,
+            subtitle_guard,
+        )
     };
     meta.anime_names_resolved = super::anime_titles::restore_names(&mut meta, &normalized_title);
     super::anime_titles::restore_explicit_episode(&mut meta, &normalized_title);
@@ -78,7 +107,7 @@ pub(crate) fn build_meta_info(
                 title,
                 subtitle,
                 &ParseOptions {
-                    custom_words: Vec::new(),
+                    custom_words: Default::default(),
                     media_exts: options.media_exts.clone(),
                     release_group_regex: options.release_group_regex.clone(),
                     customization_regex: options.customization_regex.clone(),
@@ -414,6 +443,7 @@ fn parse_video(
     subtitle: Option<&str>,
     isfile: bool,
     options: &ParseOptions,
+    subtitle_guard: SubtitleSeasonGuard,
 ) -> MetaResult {
     let mut meta = base_meta("video", title, subtitle, isfile);
     if title.is_empty() {
@@ -467,7 +497,7 @@ fn parse_video(
         state.index += 1;
         init_part(&mut meta, &mut state, &current, &mut tokens);
         if state.continue_flag {
-            init_name(&mut meta, &mut state, &current, &options.media_exts);
+            init_name(&mut meta, &mut state, &current);
         }
         if state.continue_flag {
             init_year(&mut meta, &mut state, &current);
@@ -527,9 +557,9 @@ fn parse_video(
         meta.resource_type = meta.resource_type.map(|value| format!("{value} DIY"));
     }
     let org_string = meta.org_string.clone().unwrap_or_default();
-    init_subtitle(&mut meta, &org_string);
+    init_subtitle(&mut meta, &org_string, SubtitleSeasonGuard::default());
     if let Some(subtitle) = subtitle {
-        init_description(&mut meta, subtitle);
+        init_description(&mut meta, subtitle, subtitle_guard);
     }
     let cn_name = meta.cn_name.clone();
     meta.cn_name = fix_video_name(&mut meta, cn_name);
@@ -574,6 +604,7 @@ fn parse_anime(
     subtitle: Option<&str>,
     isfile: bool,
     options: &ParseOptions,
+    subtitle_guard: SubtitleSeasonGuard,
 ) -> MetaResult {
     let mut meta = base_meta("anime", title, subtitle, isfile);
     if title.is_empty() {
@@ -730,7 +761,17 @@ fn parse_anime(
         }
         meta.resource_pix =
             first_element(elements, Category::VideoResolution).and_then(normalize_resource_pix);
-        meta.resource_team = matched_release_group.or(origin_release_group);
+        let preferred_leading =
+            preferred_leading_anime_release_group(&original_title).filter(|group| {
+                !(meta.cn_name.is_none()
+                    && meta
+                        .en_name
+                        .as_deref()
+                        .is_some_and(|en| normalize_ascii_key(en) == normalize_ascii_key(group)))
+            });
+        meta.resource_team = matched_release_group
+            .or(preferred_leading)
+            .or(origin_release_group);
         meta.customization =
             match_customization(&original_title, options.customization_regex.as_ref());
         let mut sources = VideoState::default();
@@ -767,9 +808,9 @@ fn parse_anime(
         }
         init_anime_fps(&mut meta, &original_title);
         let org_string = meta.org_string.clone().unwrap_or_default();
-        init_subtitle(&mut meta, &org_string);
+        init_subtitle(&mut meta, &org_string, SubtitleSeasonGuard::default());
         if let Some(subtitle) = subtitle {
-            init_description(&mut meta, subtitle);
+            init_description(&mut meta, subtitle, subtitle_guard);
         }
     }
     if meta.media_type == MEDIA_TYPE_UNKNOWN && meta_name(&meta).is_none() {
@@ -898,13 +939,8 @@ fn base_meta(kind: &str, title: &str, subtitle: Option<&str>, isfile: bool) -> M
     }
 }
 
-/// 处理普通影视标题名称字段。
-fn init_name(
-    meta: &mut MetaResult,
-    state: &mut VideoState,
-    token: &str,
-    media_exts: &HashSet<String>,
-) {
+/// 处理普通影视标题名称字段；已识别的文件后缀由完整入口在分词前统一剥离。
+fn init_name(meta: &mut MetaResult, state: &mut VideoState, token: &str) {
     if token.is_empty() {
         return;
     }
@@ -1013,9 +1049,6 @@ fn init_name(
     {
         state.stop_name_flag = true;
     } else {
-        if media_exts.contains(&format!(".{}", token.to_lowercase())) {
-            return;
-        }
         if let Some(name) = meta.en_name.as_mut() {
             *name = format!("{name} {token}");
         } else {
@@ -1559,8 +1592,31 @@ fn init_fps(meta: &mut MetaResult, state: &mut VideoState, token: &str) {
     }
 }
 
+/// 在自定义识别词改写标题前快速提取原季号，用于判断副标题季描述是否本就对应原标题。
+fn extract_quick_title_season(title: &str) -> Option<i64> {
+    for token in TOKEN_SPLIT_RE
+        .split(title)
+        .filter(|item| !item.is_empty())
+        .flat_map(split_dot_token)
+    {
+        if let Some(cap) = SEASON_PATTERN.captures(&token) {
+            if let Some(season) = (1..=3).find_map(|index| {
+                cap.get(index)
+                    .and_then(|item| item.as_str().parse::<i64>().ok())
+            }) {
+                return Some(season);
+            }
+        }
+    }
+    let padded = format!(" {title} ");
+    SUBTITLE_SEASON_RE
+        .captures(&padded)
+        .and_then(|cap| cap.get(1))
+        .and_then(|item| cn_number_to_i64(item.as_str()))
+}
+
 /// 只读取副标题中的资源信息，剧情、计划和关联资源不参与季集识别。
-fn init_description(meta: &mut MetaResult, description: &str) {
+fn init_description(meta: &mut MetaResult, description: &str, guard: SubtitleSeasonGuard) {
     for section in description.split(['|', '｜', '\n']) {
         let header = DESCRIPTION_INFO_RE
             .split(section)
@@ -1568,14 +1624,14 @@ fn init_description(meta: &mut MetaResult, description: &str) {
             .unwrap_or_default();
         for alias in header.split('/') {
             if !DESCRIPTION_NOISE_RE.is_match(alias) {
-                init_subtitle(meta, alias);
+                init_subtitle(meta, alias, guard);
             }
         }
     }
 }
 
 /// 副标题只能补充缺失字段，不能把标题的单集扩展为整季范围。
-fn init_subtitle(meta: &mut MetaResult, title_text: &str) {
+fn init_subtitle(meta: &mut MetaResult, title_text: &str, guard: SubtitleSeasonGuard) {
     if title_text.is_empty() {
         return;
     }
@@ -1587,8 +1643,10 @@ fn init_subtitle(meta: &mut MetaResult, title_text: &str) {
         if !(0..=100).contains(&begin) || end.is_some_and(|end| end < begin || end > 100) {
             return;
         }
-        // 指向其他季度的说明不能给当前季补集号。
-        if meta.begin_season.is_some_and(|season| season != begin) {
+        // 指向其他季度的说明不能给当前季补集号；自定义识别词已偏移副标题或改写原同季季号时保留补集能力。
+        if meta.begin_season.is_some_and(|season| {
+            season != begin && !guard.offset_applied && guard.origin_season != Some(begin)
+        }) {
             return;
         }
         if meta.begin_season.is_none() {
@@ -1871,7 +1929,10 @@ fn is_likely_subtitle_label(name: &str) -> bool {
     if name.is_empty() {
         return true;
     }
-    SUBTITLE_KEYWORD_RE.is_match(name) || super::anime_titles::is_label(name)
+    let trimmed = name.trim();
+    SUBTITLE_KEYWORD_RE.is_match(trimmed)
+        || ANIME_CATEGORY_LABEL_RE.is_match(trimmed)
+        || super::anime_titles::is_label(trimmed)
 }
 
 /// 判断发布组字段是否实际更像标题，避免误把真实片名当字幕组排除。
@@ -2219,6 +2280,32 @@ fn clear_parsed_title_for_parent_merge(meta: &mut MetaResult) {
     meta.original_name = None;
 }
 
+/// anitomy-pure 对连续分类方括号可能把第二段识别为发布组；带连接符的首段更接近字幕组命名。
+fn preferred_leading_anime_release_group(title: &str) -> Option<String> {
+    let candidate = FIRST_BRACKET_RE
+        .captures(title)
+        .and_then(|captures| captures.get(1))?
+        .as_str()
+        .trim();
+    if !candidate.contains(['-', '@'])
+        || !candidate.chars().any(|ch| ch.is_ascii_alphabetic())
+        || !candidate
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '-' | '_' | '.' | '@'))
+        || super::anime_titles::is_label(candidate)
+        || BRACKET_RESOURCE_RE.is_match(candidate)
+        || RESOURCES_PIX_PATTERN.is_match(candidate)
+        || VIDEO_ENCODE_PATTERN.is_match(candidate)
+        || AUDIO_ENCODE_PATTERN.is_match(candidate)
+        || SEASON_PATTERN.is_match(candidate)
+        || EPISODE_PATTERN.is_match(candidate)
+        || extract_video_bit(candidate).is_some()
+    {
+        return None;
+    }
+    Some(candidate.to_string())
+}
+
 /// 合并父目录元信息。
 fn merge_meta(target: &mut MetaResult, source: &MetaResult) {
     if target.media_type == MEDIA_TYPE_UNKNOWN && source.media_type != MEDIA_TYPE_UNKNOWN {
@@ -2249,6 +2336,7 @@ fn merge_meta(target: &mut MetaResult, source: &MetaResult) {
     fill_option(&mut target.resource_team, &source.resource_team);
     fill_option(&mut target.customization, &source.customization);
     fill_option(&mut target.resource_effect, &source.resource_effect);
+    fill_option(&mut target.web_source, &source.web_source);
     fill_option(&mut target.video_encode, &source.video_encode);
     fill_option(&mut target.video_bit, &source.video_bit);
     fill_option(&mut target.audio_encode, &source.audio_encode);
@@ -2262,12 +2350,15 @@ fn merge_meta(target: &mut MetaResult, source: &MetaResult) {
     if target.doubanid.is_none() {
         target.doubanid = source.doubanid.clone();
     }
-    if target.media_source.is_none() {
+    // 来源与 ID 是同一个身份，不能从不同目录层级分别补值后拼成无效组合。
+    if (target.media_source.is_none() || target.media_id.is_none())
+        && source.media_source.is_some()
+        && source.media_id.is_some()
+    {
         target.media_source = source.media_source;
-    }
-    if target.media_id.is_none() {
         target.media_id = source.media_id.clone();
     }
+    fill_option(&mut target.episode_group, &source.episode_group);
 }
 
 /// 若目标字段为空则使用来源字段。
@@ -2481,27 +2572,34 @@ fn match_release_group(title: &str, regex: Option<&Regex>) -> Option<String> {
     let mut search_start = 0;
     while search_start < title.len() {
         let remainder = &title[search_start..];
-        let Some(matched) = regex.find(remainder) else {
+        let Some(cap) = regex.captures(remainder) else {
             break;
+        };
+        let Some(matched) = cap.get(0) else {
+            search_start += remainder.chars().next().map_or(1, char::len_utf8);
+            continue;
         };
         let matched_start = search_start + matched.start();
         let matched_end = search_start + matched.end();
-        let matched_text = &title[matched_start..matched_end];
-        let Some(cap) = regex.captures(matched_text) else {
-            search_start = matched_end;
-            continue;
-        };
         if let Some(item) = cap.get(2) {
             let value = item.as_str().to_string();
             if !unique.contains(&value) {
                 unique.push(value);
             }
-            search_start = matched_start + item.end();
+            search_start += item.end();
         } else {
             search_start = matched_end;
         }
         if search_start <= matched_start {
-            search_start = matched_end;
+            search_start = if matched_end > matched_start {
+                matched_end
+            } else {
+                matched_start
+                    + title[matched_start..]
+                        .chars()
+                        .next()
+                        .map_or(1, char::len_utf8)
+            };
         }
     }
     (!unique.is_empty()).then(|| unique.join("@"))
@@ -2552,11 +2650,12 @@ fn match_customization(title: &str, regex: Option<&Regex>) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::{
-        build_meta_info, build_release_group_regex, find_explicit_metainfo, is_anime,
-        match_release_group,
+        build_meta_info, build_meta_path, build_release_group_regex, find_explicit_metainfo,
+        is_anime, is_likely_subtitle_label, match_release_group, merge_meta,
     };
-    use crate::metainfo::model::MediaSource;
+    use crate::metainfo::model::{MediaSource, MetaResult};
     use crate::metainfo::ParseOptions;
+    use std::collections::HashMap;
 
     /// 通用媒体身份字段不是自定义识别词语法，不能形成媒体身份。
     #[test]
@@ -2841,5 +2940,244 @@ mod tests {
             false,
         );
         assert_eq!(episode.begin_episode, None);
+    }
+
+    /// 标题无集数时，自定义识别词集数偏移应作用于副标题，且保留季映射与原副标题季描述。
+    #[test]
+    fn applies_custom_word_episode_offset_to_subtitle() {
+        let custom_words = vec![
+            "BLEACH Thousand-Year Blood War S04 => BLEACH 2004 S02 && S02 <> 1080p >> EP+40"
+                .to_string(),
+        ];
+        let options = ParseOptions::cached(
+            custom_words.clone(),
+            Vec::new(),
+            String::new(),
+            Vec::new(),
+            HashMap::new(),
+        );
+        let parsed = build_meta_info(
+            "BLEACH Thousand-Year Blood War S04 1080p Disney+ WEB-DL AAC 2.0 H.264-CHDWEB",
+            Some("死神 千年血战篇 -祸进谭- 第四季 第8集 ..."),
+            &options,
+            true,
+        );
+
+        assert_eq!(parsed.begin_season, Some(2));
+        assert_eq!(parsed.begin_episode, Some(48));
+        assert_eq!(
+            parsed.subtitle.as_deref(),
+            Some("死神 千年血战篇 -祸进谭- 第四季 第48集 ...")
+        );
+        assert_eq!(parsed.apply_words, custom_words);
+    }
+
+    /// 字幕扩展名与标题词元相同时，仍须保留片名中的词元，同时真实字幕后缀仍正常剥离。
+    #[test]
+    fn preserves_title_token_matching_subtitle_extension() {
+        let options = ParseOptions::cached(
+            Vec::new(),
+            vec![".ass".to_string(), ".srt".to_string(), ".mkv".to_string()],
+            String::new(),
+            Vec::new(),
+            HashMap::new(),
+        );
+        let title =
+            "Kick-Ass.2010.PROPER.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos-FGT.mkv";
+        let parsed = build_meta_info(title, None, &options, true);
+        let parsed_path = build_meta_path(&format!("/movies/{title}"), &options);
+        let parsed_sub = build_meta_info(
+            "Kick-Ass.2010.1080p.BluRay.x264.chs.ass",
+            None,
+            &options,
+            true,
+        );
+
+        assert_eq!(parsed.en_name.as_deref(), Some("Kick Ass"));
+        assert_eq!(parsed.year.as_deref(), Some("2010"));
+        assert_eq!(parsed_path.en_name.as_deref(), Some("Kick Ass"));
+        assert_eq!(parsed_path.year.as_deref(), Some("2010"));
+        assert_eq!(parsed_sub.en_name.as_deref(), Some("Kick Ass"));
+        assert_eq!(parsed_sub.year.as_deref(), Some("2010"));
+        assert!(parsed_sub.isfile);
+    }
+
+    /// 连续动漫标签中带连接符的首段发布组应优先于分类标签，但不得把资源或语言标签误判为发布组。
+    #[test]
+    fn prefers_leading_anime_release_group() {
+        let options = ParseOptions::empty();
+        let parsed = build_meta_info(
+            "[GM-Team][国漫][寻剑 第1季][Sword Quest Season 1][2002][02][AVC][GB][1080P]",
+            None,
+            &options,
+            true,
+        );
+        assert_eq!(parsed.resource_team.as_deref(), Some("GM-Team"));
+
+        let en_anime = build_meta_info(
+            "[GM-Team][TV][Sword Quest][2002][AVC][1080P]",
+            None,
+            &options,
+            true,
+        );
+        assert_eq!(en_anime.resource_team.as_deref(), Some("GM-Team"));
+
+        assert_eq!(
+            super::preferred_leading_anime_release_group("[WEB-DL][TV][Sword Quest][2002]"),
+            None
+        );
+        assert_eq!(
+            super::preferred_leading_anime_release_group("[CHS-CHT][TV][Sword Quest][2002]"),
+            None
+        );
+    }
+
+    /// 路径合并应补齐父目录平台与剧集组字段，并保持媒体身份来源和 ID 成对继承。
+    #[test]
+    fn merges_stable_path_contract_fields() {
+        let options = ParseOptions::cached(
+            Vec::new(),
+            vec![".mkv".to_string()],
+            String::new(),
+            Vec::new(),
+            HashMap::from([("AMZN".to_string(), "Amazon".to_string())]),
+        );
+        let parsed = build_meta_path(
+            "/Show 2024 AMZN WEB-DL {[tmdbid=46195;type=tv;g=5ad0ec240e0a26303f00d84d;s=1]}/Show.S01E01.mkv",
+            &options,
+        );
+
+        assert_eq!(parsed.web_source.as_deref(), Some("Amazon"));
+        assert_eq!(
+            parsed.episode_group.as_deref(),
+            Some("5ad0ec240e0a26303f00d84d")
+        );
+        assert_eq!(parsed.media_source, Some(MediaSource::TheMovieDb));
+        assert_eq!(parsed.media_id.as_deref(), Some("46195"));
+
+        let mut half_target = MetaResult {
+            media_source: Some(MediaSource::TheMovieDb),
+            media_id: None,
+            ..MetaResult::default()
+        };
+        let full_source = MetaResult {
+            media_source: Some(MediaSource::Bangumi),
+            media_id: Some("400602".to_string()),
+            episode_group: Some("group".to_string()),
+            ..MetaResult::default()
+        };
+        merge_meta(&mut half_target, &full_source);
+
+        assert_eq!(half_target.media_source, Some(MediaSource::Bangumi));
+        assert_eq!(half_target.media_id.as_deref(), Some("400602"));
+        assert_eq!(half_target.episode_group.as_deref(), Some("group"));
+
+        let mut incomplete_source_target = MetaResult::default();
+        let half_source = MetaResult {
+            media_source: Some(MediaSource::AniList),
+            media_id: None,
+            ..MetaResult::default()
+        };
+        merge_meta(&mut incomplete_source_target, &half_source);
+        assert_eq!(incomplete_source_target.media_source, None);
+        assert_eq!(incomplete_source_target.media_id, None);
+    }
+
+    /// 空数字圆括号 TMDB 标签不得被当作合法标签剥离或生成媒体身份。
+    #[test]
+    fn rejects_empty_parenthesized_tmdb_tag() {
+        for title in ["狩猎 (2022) (tmdb-)", "狩猎 (2022) (tmdbid=   )"] {
+            let explicit = find_explicit_metainfo(title);
+
+            assert_eq!(explicit.tmdbid, None, "title: {title}");
+            assert_eq!(explicit.media_source, None, "title: {title}");
+            assert_eq!(explicit.media_id, None, "title: {title}");
+            assert_eq!(explicit.title, title, "title: {title}");
+        }
+    }
+
+    /// 真实标题中的 Movie 等词不是独立分类标签，且独立分类标签仍须被过滤。
+    #[test]
+    fn distinguishes_category_labels_from_title_words() {
+        for label in [
+            "Movie",
+            "TV",
+            "TV Series",
+            "TV 01-26 Fin",
+            "Animation",
+            "Animations",
+            "Animations(动画片)",
+            "Anime",
+            "7月新番",
+            "月番",
+            "★7月新番",
+            "★04月新番★",
+            "2022年7月番",
+            "22年日剧",
+            "美剧",
+            "动画",
+            "动画片",
+        ] {
+            assert!(is_likely_subtitle_label(label), "{label}");
+        }
+        for title in [
+            "Boku no Kokoro no Yabai Yatsu Movie",
+            "Starry Sky Movie",
+            "The Movie Club",
+            "Persona 4 The Animation",
+            "TV Animation Club",
+            "My Anime Story",
+            "动画之旅",
+        ] {
+            assert!(!is_likely_subtitle_label(title), "{title}");
+            assert!(!crate::metainfo::anime_titles::is_label(title), "{title}");
+        }
+
+        let options = ParseOptions::cached(
+            Vec::new(),
+            Vec::new(),
+            "测试字幕组|黑白字幕组".to_string(),
+            Vec::new(),
+            HashMap::new(),
+        );
+        let movie = build_meta_info(
+            "[黑白字幕组]我心里危险的东西剧场版 / Boku no Kokoro no Yabai Yatsu Movie [2026] [WEB-DL 1080p AVC-8bit AAC][CHS](检索用：我内心的糟糕念头 剧场版)",
+            None,
+            &options,
+            true,
+        );
+        assert_eq!(movie.cn_name.as_deref(), Some("我心里危险的东西剧场版"));
+        assert_eq!(
+            movie.en_name.as_deref(),
+            Some("Boku No Kokoro No Yabai Yatsu Movie")
+        );
+        assert_eq!(movie.year.as_deref(), Some("2026"));
+        assert_eq!(movie.media_type, "电影");
+        assert_eq!(movie.resource_team.as_deref(), Some("黑白字幕组"));
+
+        let starry = build_meta_info(
+            "[测试字幕组][Starry Sky Movie][2026][1080p][AVC][AAC][CHS]",
+            None,
+            &options,
+            true,
+        );
+        assert_eq!(starry.en_name.as_deref(), Some("Starry Sky Movie"));
+        assert_eq!(starry.original_name.as_deref(), Some("Starry Sky Movie"));
+        assert_eq!(starry.year.as_deref(), Some("2026"));
+        assert_eq!(starry.media_type, "电影");
+        assert_eq!(starry.resource_team.as_deref(), Some("测试字幕组"));
+
+        let with_category = build_meta_info(
+            "[测试字幕组][TV Series][动画之旅 / Animation Journey][2026][01][1080p][AVC][AAC][CHS]",
+            None,
+            &options,
+            true,
+        );
+        assert_eq!(with_category.cn_name.as_deref(), Some("动画之旅"));
+        assert_eq!(with_category.en_name.as_deref(), Some("Animation Journey"));
+        assert_eq!(with_category.year.as_deref(), Some("2026"));
+        assert_eq!(with_category.begin_episode, Some(1));
+        assert_eq!(with_category.media_type, "电视剧");
+        assert_eq!(with_category.resource_team.as_deref(), Some("测试字幕组"));
     }
 }

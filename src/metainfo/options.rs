@@ -1,3 +1,4 @@
+use super::custom_words::PreparedWords;
 use super::parser::{build_customization_regex, build_release_group_regex};
 use super::regex::Regex;
 use crate::support::cache::BoundedCache;
@@ -12,7 +13,7 @@ static PARSE_OPTIONS_EXTERNAL_KEY_CACHE: Lazy<Mutex<BoundedCache<String, Arc<Par
 
 #[derive(Clone)]
 pub(crate) struct ParseOptions {
-    pub(super) custom_words: Vec<String>,
+    pub(super) custom_words: Arc<PreparedWords>,
     pub(super) media_exts: HashSet<String>,
     pub(super) release_group_regex: Option<Regex>,
     pub(super) customization_regex: Option<Regex>,
@@ -132,7 +133,7 @@ impl ParseOptions {
         streaming_platforms: HashMap<String, String>,
     ) -> Arc<Self> {
         Arc::new(Self {
-            custom_words,
+            custom_words: Arc::new(PreparedWords::new(&custom_words)),
             media_exts: media_exts.iter().map(|item| item.to_lowercase()).collect(),
             release_group_regex: build_release_group_regex(&release_groups),
             customization_regex: build_customization_regex(&customization_patterns),

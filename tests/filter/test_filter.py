@@ -168,3 +168,25 @@ class FilterPublicEntryTest(TestCase):
         )
 
         self.assertEqual(result, [(0, 100)])
+
+    def test_filter_torrents_applies_custom_word_episode_offset_to_description(self):
+        """批量种子过滤快路径应将自定义识别词集数偏移作用于副标题。"""
+        groups = [{"name": "test", "rule_string": "SIZE"}]
+        rule_set = {"SIZE": {"size_range": "100-120"}}
+        custom_words = ["Show S01 <> 1080p >> 2*EP-1"]
+        # 副标题 第1-6集 偏移后为 第1-11集（共 11 集），1210 MB / 11 = 110 MB 命中 100-120
+        torrent = _torrent(
+            title="Show S01 1080p WEB-DL H264-GRP",
+            description="某剧 第一季 第1-6集",
+            size=1210 * 1024 * 1024,
+        )
+
+        result = moviepilot_rust.filter_torrents_fast(
+            groups,
+            [torrent],
+            rule_set,
+            None,
+            build_options(custom_words=custom_words),
+        )
+
+        self.assertEqual(result, [(0, 100)])
